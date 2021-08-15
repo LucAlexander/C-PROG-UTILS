@@ -22,7 +22,7 @@ void* stackPop(Stack* stack){
 void stackPush(Stack* stack, void* data){
 	if (stack->count == stack->capacity){
 		stack->data = realloc(stack->data, stack->size*stack->capacity*2);
-		stack->size*=2;
+		stack->capacity*=2;
 	}
 	uint8_t* item = (uint8_t*)(stack->data);
 	item += stack->size*(stack->count++);
