@@ -3,20 +3,20 @@
 
 #include <inttypes.h>
 
-const float PI = 3.141592;
+extern const float PI;
 
-typedef struct{
+typedef struct v2{
 	float x;
 	float y;
 }v2;
 
-typedef struct{
+typedef struct v3{
 	float x;
 	float y;
 	float z;
 }v3;
 
-typedef struct{
+typedef struct v4{
 	float left;
 	float top;
 	float right;

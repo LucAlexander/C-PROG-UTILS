@@ -1,6 +1,8 @@
 #include <math.h>
 #include "gmath.h"
 
+const float PI = 3.1415926;
+
 float lenDirX(float len, int32_t dir){
 	return len * cos(dir*PI/100.0);
 }
@@ -10,7 +12,7 @@ float lenDirY(float len, int32_t dir){
 }
 
 int32_t sign(int32_t val){
-	val == 0 ? 0 : val > 0 ? 1 : -1;
+	return val == 0 ? 0 : val > 0 ? 1 : -1;
 }
 
 float distancePoint(v2 a, v2 b){
