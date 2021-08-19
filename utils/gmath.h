@@ -21,30 +21,16 @@ typedef struct{
 	float top;
 	float right;
 	float bottom;
-}Rect;
+}v4;
 
-typedef struct{
-	v3 a;
-	v3 b;
-	v3 c;
-	v3 d;
-	v3 e;
-	v3 f;
-	v3 g;
-	v3 h;
-}Cube;
+float lenDirX(float len, int32_t dir);
 
+float lenDirY(float len, int32_t dir);
 
-float lenDirX(float len, uint32_t dir);
+int32_t sign(int32_t val);
 
-float lenDirY(float len, uint32_t dir);
+float distancePoint(v2, v2);
 
-uint32_t sign(uint32_t val);
-
-float v2DistancePoint(v2, v2);
-
-float v3DistancePoint(v3, v3);
-
-uint32_t pointInRect(v2, Rect);
+uint32_t pointInRect(v2, v4);
 
 #endif
