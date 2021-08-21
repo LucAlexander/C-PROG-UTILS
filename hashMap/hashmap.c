@@ -140,3 +140,39 @@ void mapClose(map* m){
 	m = NULL;
 }
 
+mapIterator* mapIteratorInit(map* m){
+	mapIterator* n = (mapIterator*)malloc(sizeof(mapIterator));
+	n->m = m;
+	uint32_t i;
+	for (i = 0;i<m->capacity && m->data[i]==NULL;++i){}
+	if (i==m->capacity){
+		n->index = -1;
+		n->current = NULL;
+		return n;
+	}
+	n->current = m->data[i];
+	n->index = i;
+	return n;
+}
+
+void mapIteratorNext(mapIterator* n){
+	if (n->current->next != NULL){
+		n->current = n->current->next;
+		return;
+	}
+	uint32_t i;
+	for (i = ++n->index;i<n->m->capacity && n->m->data[i]==NULL;++i){}
+	if (i==n->m->capacity){
+		n->index = -1;
+		n->current = NULL;
+		return;
+	}
+	n->current = n->m->data[i];
+	n->index = i;
+	return;
+}
+
+void mapIteratorClose(mapIterator* i){
+	free(i);
+	i = NULL;
+}

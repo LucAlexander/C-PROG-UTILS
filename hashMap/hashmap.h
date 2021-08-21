@@ -20,6 +20,12 @@ typedef struct{
 	size_t valSize;
 }map;
 
+typedef struct{
+	map* m;
+	hlNode* current;
+	uint32_t index;
+} mapIterator;
+
 map* mapInit(size_t size);
 
 uint32_t asciiWeightHash(char* key, uint32_t capacity);
@@ -34,4 +40,9 @@ void mapRemove(map* m, char* key);
 
 void mapClose(map* m);
 
+mapIterator* mapIteratorInit(map* m);
+
+void mapIteratorNext(mapIterator* i);
+
+void mapIteratorClose(mapIterator* i);
 #endif
