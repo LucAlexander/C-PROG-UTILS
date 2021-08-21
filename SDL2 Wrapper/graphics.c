@@ -5,6 +5,7 @@
 
 static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
+static view renderView = {0, 0, 0, 0};
 
 void graphicsInit(uint32_t width, uint32_t height, const char* windowTitle){
 	SDL_Init(SDL_INIT_VIDEO);
@@ -16,12 +17,20 @@ void graphicsInit(uint32_t width, uint32_t height, const char* windowTitle){
 	}
 	SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_OPENGL, &window, &renderer);
 	SDL_SetWindowTitle(window, windowTitle);
+	view defaultView = {0, 0, width, height};
+	renderSetView(defaultView);
 }
 
 void graphicsClose(){
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
+}
+
+void renderSetView(view v){
+	renderView = v;
+	const SDL_Rect port = {v.px, v.py, v.pw, v.ph};
+	SDL_RenderSetViewport(renderer, &port);
 }
 
 void renderFlip(){
@@ -36,20 +45,28 @@ void renderSetColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a){
 	SDL_SetRenderDrawColor(renderer, r, g, b, a);
 }
 
-void blitSurface(SDL_Texture* texture, SDL_Rect* srcRect, SDL_Rect* destRect){
-	SDL_RenderCopy(renderer, texture, srcRect, destRect);
+void blitSurface(SDL_Texture* texture, SDL_Rect* srcRect, SDL_Rect destRect){
+	destRect.x-=renderView.x;
+	destRect.y-=renderView.y;
+	SDL_RenderCopy(renderer, texture, srcRect, &destRect);
 }
 
-void blitSurfaceEX(SDL_Texture* texture, SDL_Rect* srcRect, SDL_Rect* destRect, double angle, SDL_Point* center, SDL_RendererFlip flip){
-	SDL_RenderCopyEx(renderer, texture, srcRect, destRect, angle, center, flip);
+void blitSurfaceEX(SDL_Texture* texture, SDL_Rect* srcRect, SDL_Rect destRect, double angle, SDL_Point* center, SDL_RendererFlip flip){
+	destRect.x-=renderView.x;
+	destRect.y-=renderView.y;
+	SDL_RenderCopyEx(renderer, texture, srcRect, &destRect, angle, center, flip);
 }
 
-void blitSurfaceF(SDL_Texture* texture, SDL_Rect* srcRect, SDL_FRect* destRect){
-	SDL_RenderCopyF(renderer, texture, srcRect, destRect);
+void blitSurfaceF(SDL_Texture* texture, SDL_Rect* srcRect, SDL_FRect destRect){
+	destRect.x-=renderView.x;
+	destRect.y-=renderView.y;
+	SDL_RenderCopyF(renderer, texture, srcRect, &destRect);
 }
 
-void blitSurfaceEXF(SDL_Texture* texture, SDL_Rect* srcRect, SDL_FRect* destRect, double angle, SDL_FPoint* center, SDL_RendererFlip flip){
-	SDL_RenderCopyExF(renderer, texture, srcRect, destRect, angle, center, flip);
+void blitSurfaceEXF(SDL_Texture* texture, SDL_Rect* srcRect, SDL_FRect destRect, double angle, SDL_FPoint* center, SDL_RendererFlip flip){
+	destRect.x-=renderView.x;
+	destRect.y-=renderView.y;
+	SDL_RenderCopyExF(renderer, texture, srcRect, &destRect, angle, center, flip);
 }
 
 void drawLineV2(v2 a, v2 b){
@@ -57,7 +74,7 @@ void drawLineV2(v2 a, v2 b){
 }
 
 void drawLine(float x, float y, float xx, float yy){
-	SDL_RenderDrawLine(renderer, x, y, xx, yy);
+	SDL_RenderDrawLine(renderer, x-renderView.x, y-renderView.y, xx-renderView.x, yy-renderView.y);
 }
 
 void drawRectV2(v2 a, v2 b, uint8_t p){
@@ -69,7 +86,12 @@ void drawRectV4(v4 r, uint8_t p){
 }
 
 void drawRect(float x1, float y1, float x2, float y2, uint8_t p){
-	SDL_FRect bound = {x1, y1, x2, y2};
+	SDL_FRect bound = {
+		x1-renderView.x,
+		y1-renderView.y,
+	       	x2+renderView.x-x1-renderView.x,
+	       	y2+renderView.y-y1-renderView.y
+	};
 	if (p & FILL){
 		SDL_RenderFillRectF(renderer, &bound);
 	}
