@@ -6,14 +6,17 @@
 
 #include <stdio.h>
 
+#include <winbase.h>
+
 map* mapInit(size_t size){
 	map* m = (map*)malloc(sizeof(map));
 	m->capacity = 32;
 	m->valSize = size;
 	m->data = calloc(m->capacity, sizeof(hlNode*));
+	return m;
 }
 
-hlNode* hlNodeInit(size_t size, char* key, void* value){
+hlNode* hlNodeInit(size_t size, const char* key, void* value){
 	hlNode* newNode = (hlNode*)malloc(sizeof(hlNode));
 	newNode->key = strdup(key);
 	newNode->next = NULL;
@@ -25,7 +28,7 @@ hlNode* hlNodeInit(size_t size, char* key, void* value){
 	return newNode;
 }
 
-uint32_t asciiWeightHash(char* key, uint32_t capacity){
+uint32_t asciiWeightHash(const char* key, uint32_t capacity){
 	uint32_t result = 0;
 	uint32_t len = sizeof(key);
 	for (int i = 0;i<len;++i){
@@ -34,10 +37,13 @@ uint32_t asciiWeightHash(char* key, uint32_t capacity){
 	return result%capacity;
 }
 
-void mapListInsert(hlNode* n, size_t size, char* key, void* value){
+void mapListInsert(hlNode* n, size_t size, const char* key, void* value){
 	hlNode* last = n;
 	while(n != NULL){
 		if (strcmp(n->key, key) == 0){
+			if (n->val == NULL){
+				n->val = malloc(size);
+			}
 			memcpy(n->val, value, size);
 			return;
 		}
@@ -48,7 +54,7 @@ void mapListInsert(hlNode* n, size_t size, char* key, void* value){
 	last->next = newNode;
 }
 
-void mapInsert(map* m, char* key, void* value){
+void mapInsert(map* m, const char* key, void* value){
 	uint32_t index = asciiWeightHash(key, m->capacity);
 	if (m->data[index] != NULL){
 		mapListInsert(m->data[index], m->valSize, key, value);
@@ -58,7 +64,7 @@ void mapInsert(map* m, char* key, void* value){
 	m->data[index] = newNode;
 }
 
-void* mapGet(map* m, char* key){
+void* mapGet(map* m, const char* key){
 	uint32_t hash = asciiWeightHash(key, m->capacity);
 	hlNode* n = m->data[hash];
 	hlNode* last = n;
@@ -72,14 +78,14 @@ void* mapGet(map* m, char* key){
 	if (last != NULL){
 		hlNode* newNode = hlNodeInit(m->valSize, key, NULL);
 		last->next = newNode;
-		return newNode;
+		return NULL;
 	}
 	hlNode* newNode = hlNodeInit(m->valSize, key, NULL);
 	m->data[hash] = newNode;
-	return newNode;
+	return NULL;
 }
 
-void mapRemove(map* m, char* key){
+void mapRemove(map* m, const char* key){
 	uint32_t index = asciiWeightHash(key, m->capacity);
 	hlNode* temp = m->data[index];
 	if (temp == NULL){

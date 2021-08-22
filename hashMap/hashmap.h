@@ -10,11 +10,11 @@ typedef struct hlNode{
 	void* val;
 } hlNode;
 
-hlNode* hlNodeInit(size_t size, char* key, void* value);
+hlNode* hlNodeInit(size_t size, const char* key, void* value);
 
 void hlNodeFree(hlNode* n);
 
-typedef struct{
+typedef struct map{
 	hlNode** data;
 	uint32_t capacity;
 	size_t valSize;
@@ -28,15 +28,15 @@ typedef struct{
 
 map* mapInit(size_t size);
 
-uint32_t asciiWeightHash(char* key, uint32_t capacity);
+uint32_t asciiWeightHash(const char* key, uint32_t capacity);
 
-void mapListInsert(hlNode* n, size_t size, char* key, void* value);
+void mapListInsert(hlNode* n, size_t size, const char* key, void* value);
 
-void mapInsert(map* m, char* key, void* value);
+void mapInsert(map* m, const char* key, void* value);
 
-void* mapGet(map* m, char* key);
+void* mapGet(map* m, const char* key);
 
-void mapRemove(map* m, char* key);
+void mapRemove(map* m, const char* key);
 
 void mapClose(map* m);
 
