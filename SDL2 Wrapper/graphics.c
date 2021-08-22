@@ -1,7 +1,8 @@
 #include "graphics.h"
 #include "gmath.h"
+#include "fileLoader.h"
 
-#include <SDL2\SDL_image.h>
+#include <stdio.h>
 
 static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
@@ -19,12 +20,22 @@ void graphicsInit(uint32_t width, uint32_t height, const char* windowTitle){
 	SDL_SetWindowTitle(window, windowTitle);
 	view defaultView = {0, 0, width, height};
 	renderSetView(defaultView);
+	fileLoaderInit();
 }
 
 void graphicsClose(){
+	fileLoaderClose();
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
+}
+
+SDL_Texture* getTexture(const char* src){
+	SDL_Texture* item = SDL_CreateTextureFromSurface(renderer, loadImage(src));
+	if (item == NULL){
+		printf("[!] Unable to load image \'%s\'\n",src);
+	}
+	return item;
 }
 
 void renderSetView(view v){
@@ -99,3 +110,4 @@ void drawRect(float x1, float y1, float x2, float y2, uint8_t p){
 		SDL_RenderDrawRectF(renderer, &bound);
 	}
 }
+

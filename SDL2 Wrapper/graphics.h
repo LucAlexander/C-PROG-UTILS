@@ -2,23 +2,16 @@
 #define GRAPHICS_H
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <inttypes.h>
 
 /*TODO
- * loadMedia
- * Sprite and texture handling
- * Font
+ * Sprite component
+ * Fonts
  * Test
-	media handler
-		load media
-		keep track of media
-	graphics
-		loads textures
-			createTexturefromSurface, calls loadImage/loadMedia
-		loads fonts
 	sprite
 		calls graphics to load const char* src
-			graphics loading texture function passes to media handler via like, (loadMedia/loadImage)
+		responsible for freeing texture data
 */
 
 struct v2;
@@ -40,6 +33,8 @@ typedef struct view{
 
 void graphicsInit(uint32_t width, uint32_t height, const char* windowTitle);
 void graphicsClose();
+
+SDL_Texture* getTexture(const char* src);
 
 void renderSetView(view v);
 
