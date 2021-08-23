@@ -1,12 +1,14 @@
 #include "graphics.h"
 #include "gmath.h"
 #include "fileLoader.h"
+#include "hashmap.h"
 
 #include <stdio.h>
 
 static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
 static view renderView = {0, 0, 0, 0};
+static fontHandler fonts = {NULL, NULL};
 
 void graphicsInit(uint32_t width, uint32_t height, const char* windowTitle){
 	SDL_Init(SDL_INIT_VIDEO);
@@ -21,9 +23,11 @@ void graphicsInit(uint32_t width, uint32_t height, const char* windowTitle){
 	view defaultView = {0, 0, width, height};
 	renderSetView(defaultView);
 	fileLoaderInit();
+	fontHandlerInit();
 }
 
 void graphicsClose(){
+	fontHandlerClose();
 	fileLoaderClose();
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
@@ -111,3 +115,60 @@ void drawRect(float x1, float y1, float x2, float y2, uint8_t p){
 	}
 }
 
+void fontHandlerInit(){
+	fonts.charList = "`1234567890-=~!@#$%^&*()_+qwertyuiop[]QWERTYUIOP{}|asdfghjkl;'ASDFGHJKL:zxcvbnm,./ZXCVBNM<>? ";
+	fonts.activeFont = "";
+	fonts.list = mapInit(sizeof(font));
+}
+
+void loadFont(const char* src){
+	font* fnt = (font*)mapGet(fonts.list, src);
+	if (fnt!=NULL){
+		return;
+	}
+	font f;
+	f.glyphMap = mapInit(sizeof(SDL_Texture*));
+	f.r = 255;
+	f.g = 255;
+	f.b = 255;
+	f.a = 255;
+	f.kerning = 1;
+	f.leading = 1;
+	f.ptSize = 16;
+	TTF_Font* lFont = TTF_OpenFont(src, f.ptSize);
+	uint32_t i;
+	for (i = 0;i<sizeof(fonts.charList);++i){
+		const char* c = &fonts.charList[i];
+		SDL_Color fg = {f.r, f.g, f.b};
+		SDL_Surface* s = TTF_RenderText_Solid(lFont, c, fg);
+		SDL_Texture* t = SDL_CreateTextureFromSurface(renderer, s);
+		mapInsert(f.glyphMap, c, t);
+		SDL_FreeSurface(s);
+	}
+	TTF_CloseFont(lFont);
+	mapInsert(fonts.list, src, &f);
+}
+
+void setFont(char* fnt){
+	fonts.activeFont = fnt;
+}
+
+void fontClose(font* f){
+	mapIterator* mit = mapIteratorInit(f->glyphMap);
+	while(mit->index != -1){
+		SDL_DestroyTexture((SDL_Texture*)mit->current->val);
+		mapIteratorNext(mit);
+	}
+	mapIteratorClose(mit);
+	mapClose(f->glyphMap);
+}
+
+void fontHandlerClose(){
+	mapIterator* mit = mapIteratorInit(fonts.list);
+	while(mit->index != -1){
+		fontClose((font*)mit->current->val);
+		mapIteratorNext(mit);
+	}
+	mapIteratorClose(mit);
+	mapClose(fonts.list);
+}
