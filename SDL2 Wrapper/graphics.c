@@ -2,6 +2,7 @@
 #include "gmath.h"
 #include "fileLoader.h"
 #include "hashmap.h"
+#include <string.h>
 
 #include <stdio.h>
 
@@ -12,6 +13,7 @@ static fontHandler fonts = {NULL, NULL};
 
 void graphicsInit(uint32_t width, uint32_t height, const char* windowTitle){
 	SDL_Init(SDL_INIT_VIDEO);
+	TTF_Init();
 	if (window != NULL){
 		SDL_DestroyWindow(window);
 	}
@@ -29,6 +31,7 @@ void graphicsInit(uint32_t width, uint32_t height, const char* windowTitle){
 void graphicsClose(){
 	fontHandlerClose();
 	fileLoaderClose();
+	TTF_Quit();
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
@@ -127,7 +130,7 @@ void loadFont(const char* src){
 		return;
 	}
 	font f;
-	f.glyphMap = mapInit(sizeof(SDL_Texture*));
+	memset(f.glyphMap, 0, sizeof(SDL_Texture*)*128);
 	f.r = 255;
 	f.g = 255;
 	f.b = 255;
@@ -135,14 +138,19 @@ void loadFont(const char* src){
 	f.kerning = 1;
 	f.leading = 1;
 	f.ptSize = 16;
+	f.scale = 1;
 	TTF_Font* lFont = TTF_OpenFont(src, f.ptSize);
 	uint32_t i;
-	for (i = 0;i<sizeof(fonts.charList);++i){
-		const char* c = &fonts.charList[i];
+	char c[2];
+	c[1] = '\0';
+	for (i = 0;i<strlen(fonts.charList);++i){
+		c[0] = fonts.charList[i];
 		SDL_Color fg = {f.r, f.g, f.b};
 		SDL_Surface* s = TTF_RenderText_Solid(lFont, c, fg);
 		SDL_Texture* t = SDL_CreateTextureFromSurface(renderer, s);
-		mapInsert(f.glyphMap, c, t);
+		if (t!=NULL){
+			f.glyphMap[(uint8_t)c[0]] = t;
+		}
 		SDL_FreeSurface(s);
 	}
 	TTF_CloseFont(lFont);
@@ -154,13 +162,13 @@ void setFont(char* fnt){
 }
 
 void fontClose(font* f){
-	mapIterator* mit = mapIteratorInit(f->glyphMap);
-	while(mit->index != -1){
-		SDL_DestroyTexture((SDL_Texture*)mit->current->val);
-		mapIteratorNext(mit);
+	uint32_t i;
+	for (i = 0;i<128;++i){
+		SDL_Texture* t = f->glyphMap[i];
+		if (t != NULL){
+			SDL_DestroyTexture(t);
+		}
 	}
-	mapIteratorClose(mit);
-	mapClose(f->glyphMap);
 }
 
 void fontHandlerClose(){
@@ -171,4 +179,31 @@ void fontHandlerClose(){
 	}
 	mapIteratorClose(mit);
 	mapClose(fonts.list);
+}
+
+void drawTextV2(v2 pos, char* text){
+	drawText(pos.x, pos.y, text);
+}
+
+void drawText(float x, float y, char* text){
+	font* f = (font*)mapGet(fonts.list, fonts.activeFont);
+	if (f == NULL||text==NULL){
+		return;
+	}
+	float cSize = f->scale*f->ptSize;
+	SDL_Rect dest = {x, y, cSize, cSize};
+	uint32_t i;
+	for (i = 0;i<strlen(text);++i){
+		char c = text[i];
+		if (c=='\n'){
+			dest.y += cSize + f->leading;
+			dest.x = x;
+			continue;
+		}
+		SDL_Texture* t = f->glyphMap[(uint8_t)c];
+		if(t!=NULL){
+			blitSurface(t, NULL, dest);
+		}
+		dest.x += cSize + f->kerning;
+	}
 }

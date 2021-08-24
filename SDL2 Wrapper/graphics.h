@@ -9,6 +9,8 @@
 /*TODO
  * Fonts: color and alpha for the moment ignored, come back to them
  * 	revisit with rendertext blended
+ * 	figure out a good resolutionpt/scale mix to display correctly
+ * string formatting prints
  * Test
  * Sprite component
 	sprite
@@ -42,7 +44,8 @@ typedef struct font{
 	uint32_t kerning;
 	uint32_t leading;
 	float ptSize;
-	struct map* glyphMap;
+	float scale;
+	SDL_Texture* glyphMap[128];
 }font;
 
 typedef struct fontHandler{
@@ -74,6 +77,9 @@ void drawLine(float x, float y, float xx, float yy);
 void drawRectV2(struct v2, struct v2, uint8_t p);
 void drawRectV4(struct v4, uint8_t p);
 void drawRect(float x1, float y1, float x2, float y2, uint8_t p);
+
+void drawTextV2(struct v2 pos, char* text);
+void drawText(float x, float y, char* text);
 
 void fontHandlerInit();
 void loadFont(const char* src);
