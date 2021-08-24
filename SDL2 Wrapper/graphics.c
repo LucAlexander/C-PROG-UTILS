@@ -195,15 +195,23 @@ void drawText(float x, float y, char* text){
 	uint32_t i;
 	for (i = 0;i<strlen(text);++i){
 		char c = text[i];
-		if (c=='\n'){
-			dest.y += cSize + f->leading;
-			dest.x = x;
+		switch(c){
+			case '\n':
+				dest.y += cSize + f->leading;
+				dest.x = x;
+			continue;
+			case '\t':
+				dest.x += (cSize+f->kerning)*4;
+			continue;
+			case ' ':
+				dest.x += cSize+f->kerning;
 			continue;
 		}
 		SDL_Texture* t = f->glyphMap[(uint8_t)c];
-		if(t!=NULL){
-			blitSurface(t, NULL, dest);
+		if(t==NULL){
+			return;
 		}
+		blitSurface(t, NULL, dest);
 		dest.x += cSize + f->kerning;
 	}
 }
