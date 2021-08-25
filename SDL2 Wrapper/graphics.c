@@ -194,24 +194,27 @@ void drawText(float x, float y, char* text){
 	SDL_Rect dest = {x, y, cSize, cSize};
 	uint32_t i;
 	for (i = 0;i<strlen(text);++i){
-		char c = text[i];
-		switch(c){
-			case '\n':
-				dest.y += cSize + f->leading;
-				dest.x = x;
-			continue;
-			case '\t':
-				dest.x += (cSize+f->kerning)*4;
-			continue;
-			case ' ':
-				dest.x += cSize+f->kerning;
-			continue;
-		}
-		SDL_Texture* t = f->glyphMap[(uint8_t)c];
-		if(t==NULL){
-			return;
-		}
-		blitSurface(t, NULL, dest);
-		dest.x += cSize + f->kerning;
+		drawCharacter(text[i], &dest, x, cSize, f);
 	}
+}
+
+void drawCharacter(char c, SDL_Rect* dest, float startX, float cSize, font* f){
+	switch(c){
+		case '\n':
+			dest->y += cSize + f->leading;
+			dest->x = startX;
+		return;
+		case '\t':
+			dest->x += (cSize+f->kerning)*4;
+		return;
+		case ' ':
+			dest->x += cSize+f->kerning;
+		return;
+	}
+	SDL_Texture* t = f->glyphMap[(uint8_t)c];
+	if(t==NULL){
+		return;
+	}
+	blitSurface(t, NULL, *dest);
+	dest->x += cSize + f->kerning;
 }

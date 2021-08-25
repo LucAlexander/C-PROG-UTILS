@@ -11,7 +11,6 @@
  * 	revisit with rendertext blended
  * 	figure out a good resolutionpt/scale mix to display correctly
  * string formatting prints
- * Test
  * Sprite component
 	sprite
 		calls graphics to load const char* src
@@ -80,6 +79,7 @@ void drawRect(float x1, float y1, float x2, float y2, uint8_t p);
 
 void drawTextV2(struct v2 pos, char* text);
 void drawText(float x, float y, char* text);
+void drawCharacter(char c, SDL_Rect* dest, float startX, float cSize, font* f);
 
 void fontHandlerInit();
 void loadFont(const char* src);
