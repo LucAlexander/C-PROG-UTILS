@@ -15,6 +15,7 @@
 	sprite
 		calls graphics to load const char* src
 		responsible for freeing texture data
+ * come back to audio at some point it hust wasnt working at all 
 */
 
 struct v2;
@@ -83,6 +84,7 @@ void drawCharacter(char c, SDL_Rect* dest, float startX, float cSize, font* f);
 
 void fontHandlerInit();
 void loadFont(const char* src);
+void loadFontC(const char* src, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 void setFont(char* fnt);
 void fontClose(font* f);
 void fontHandlerClose();

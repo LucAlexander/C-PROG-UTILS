@@ -125,30 +125,35 @@ void fontHandlerInit(){
 }
 
 void loadFont(const char* src){
+	loadFontC(src, 255, 255, 255, 255);
+}
+
+void loadFontC(const char* src, uint8_t r, uint8_t g, uint8_t b, uint8_t a){
 	font* fnt = (font*)mapGet(fonts.list, src);
 	if (fnt!=NULL){
 		return;
 	}
 	font f;
 	memset(f.glyphMap, 0, sizeof(SDL_Texture*)*128);
-	f.r = 255;
-	f.g = 255;
-	f.b = 255;
-	f.a = 255;
+	f.r = r;
+	f.g = g;
+	f.b = b;
+	f.a = a;
 	f.kerning = 1;
 	f.leading = 1;
 	f.ptSize = 16;
 	f.scale = 1;
 	TTF_Font* lFont = TTF_OpenFont(src, f.ptSize);
+	SDL_Color fg = {f.r, f.g, f.b};
 	uint32_t i;
 	char c[2];
 	c[1] = '\0';
 	for (i = 0;i<strlen(fonts.charList);++i){
 		c[0] = fonts.charList[i];
-		SDL_Color fg = {f.r, f.g, f.b};
 		SDL_Surface* s = TTF_RenderText_Solid(lFont, c, fg);
 		SDL_Texture* t = SDL_CreateTextureFromSurface(renderer, s);
 		if (t!=NULL){
+			SDL_SetTextureAlphaMod(t, f.a);
 			f.glyphMap[(uint8_t)c[0]] = t;
 		}
 		SDL_FreeSurface(s);
@@ -216,5 +221,7 @@ void drawCharacter(char c, SDL_Rect* dest, float startX, float cSize, font* f){
 		return;
 	}
 	blitSurface(t, NULL, *dest);
+	SDL_SetTextureColorMod(t, f->r, f->g, f->b);
+	SDL_SetTextureAlphaMod(t, f->a);
 	dest->x += cSize + f->kerning;
 }
