@@ -9,7 +9,7 @@
 static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
 static view renderView = {0, 0, 0, 0};
-static fontHandler fonts = {NULL, NULL};
+static fontHandler fonts = {NULL, NULL, NULL, NULL};
 
 void graphicsInit(uint32_t width, uint32_t height, const char* windowTitle){
 	SDL_Init(SDL_INIT_VIDEO);
@@ -121,6 +121,7 @@ void drawRect(float x1, float y1, float x2, float y2, uint8_t p){
 void fontHandlerInit(){
 	fonts.charList = "`1234567890-=~!@#$%^&*()_+qwertyuiop[]QWERTYUIOP{}|asdfghjkl;'ASDFGHJKL:zxcvbnm,./ZXCVBNM<>? ";
 	fonts.activeFont = "";
+	fonts.fnt=NULL;
 	fonts.list = mapInit(sizeof(font));
 }
 
@@ -163,7 +164,13 @@ void loadFontC(const char* src, uint8_t r, uint8_t g, uint8_t b, uint8_t a){
 }
 
 void setFont(char* fnt){
+	font* temp = mapGet(fonts.list, fnt);
+	if (temp == NULL){
+		printf("[!] No font %s is loaded, and cannot be set to active font\n",fnt);
+		return;
+	}
 	fonts.activeFont = fnt;
+	fonts.fnt = temp;
 }
 
 void fontClose(font* f){
@@ -186,42 +193,115 @@ void fontHandlerClose(){
 	mapClose(fonts.list);
 }
 
+void resetFontGlyphBlend(font* f){
+	uint8_t i;
+	for (i = 0;i<128;++i){
+		SDL_Texture* t = f->glyphMap[i];
+	        if (t != NULL){
+			SDL_SetTextureAlphaMod(t,f->a);
+			SDL_SetTextureColorMod(t,f->r, f->g, f->b);
+		}
+	}
+}
+
 void drawTextV2(v2 pos, char* text){
 	drawText(pos.x, pos.y, text);
 }
 
+void drawTextV2C(v2 pos, char* text, uint8_t r, uint8_t g, uint8_t b, uint8_t a){
+	drawTextC(pos.x, pos.y, text, r, g, b, a);
+}
+
 void drawText(float x, float y, char* text){
-	font* f = (font*)mapGet(fonts.list, fonts.activeFont);
-	if (f == NULL||text==NULL){
+	if (text==NULL){
 		return;
 	}
-	float cSize = f->scale*f->ptSize;
+	float cSize = fonts.fnt->scale*fonts.fnt->ptSize;
 	SDL_Rect dest = {x, y, cSize, cSize};
 	uint32_t i;
 	for (i = 0;i<strlen(text);++i){
-		drawCharacter(text[i], &dest, x, cSize, f);
+		drawCharacter(text[i], &dest, x, cSize, fonts.fnt);
 	}
 }
 
-void drawCharacter(char c, SDL_Rect* dest, float startX, float cSize, font* f){
+void drawTextC(float x, float y, char* text, uint8_t r, uint8_t g, uint8_t b, uint8_t a){
+	if (text==NULL){
+		return;
+	}
+	float cSize = fonts.fnt->scale*fonts.fnt->ptSize;
+	SDL_Rect dest = {x, y, cSize, cSize};
+	uint32_t i;
+	for (i = 0;i<strlen(text);++i){
+		drawCharacterC(text[i], &dest, x, cSize, fonts.fnt, r, g, b, a);
+	}
+	resetFontGlyphBlend(fonts.fnt);
+}
+
+SDL_Texture* handleWhitespace(char c, SDL_Rect* dest, float startX, float cSize, font* f){
 	switch(c){
 		case '\n':
 			dest->y += cSize + f->leading;
 			dest->x = startX;
-		return;
+		return NULL;
 		case '\t':
 			dest->x += (cSize+f->kerning)*4;
-		return;
+		return NULL;
 		case ' ':
 			dest->x += cSize+f->kerning;
-		return;
+		return NULL;
 	}
-	SDL_Texture* t = f->glyphMap[(uint8_t)c];
+	return f->glyphMap[(uint8_t)c];
+}
+
+void drawCharacter(char c, SDL_Rect* dest, float startX, float cSize, font* f){
+	SDL_Texture* t = handleWhitespace(c, dest, startX, cSize, f);
 	if(t==NULL){
 		return;
 	}
 	blitSurface(t, NULL, *dest);
-	SDL_SetTextureColorMod(t, f->r, f->g, f->b);
-	SDL_SetTextureAlphaMod(t, f->a);
 	dest->x += cSize + f->kerning;
+}
+
+void drawCharacterC(char c, SDL_Rect* dest, float startX, float cSize, font* f, uint8_t r, uint8_t g, uint8_t b, uint8_t a){
+	SDL_Texture* t = handleWhitespace(c, dest, startX, cSize, f);
+	if(t==NULL){
+		return;
+	}
+	SDL_SetTextureColorMod(t, r, g, b);
+	SDL_SetTextureAlphaMod(t, a);
+	blitSurface(t, NULL, *dest);
+	dest->x += cSize + f->kerning;
+}
+
+void drawTextEX(float x, float y, int32_t n, ...){
+	float cSize = fonts.fnt->scale*fonts.fnt->ptSize;
+	SDL_Rect dest = {x, y, cSize, cSize};
+	uint32_t i;
+	va_list args;
+	va_start(args, n);
+	const char* text;
+	uint8_t red;
+	uint8_t green;
+	uint8_t blue;
+	uint8_t alpha;
+	while(n > 0){
+		red = fonts.fnt->r;
+		green = fonts.fnt->g;
+		blue = fonts.fnt->b;
+		alpha = fonts.fnt->a;
+		text = va_arg(args, const char*);
+		n--;
+		if (n > 0){
+			red = va_arg(args,int);
+			green = va_arg(args,int);
+			blue = va_arg(args,int);
+			alpha = va_arg(args,int);
+			n-=4;
+		}
+		for (i = 0;i<strlen(text);++i){
+			drawCharacterC(text[i], &dest, x, cSize, fonts.fnt, red, green, blue, alpha);
+		}
+	}
+	resetFontGlyphBlend(fonts.fnt);
+	va_end(args);
 }

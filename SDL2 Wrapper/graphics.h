@@ -7,10 +7,6 @@
 #include <inttypes.h>
 
 /*TODO
- * Fonts: color and alpha for the moment ignored, come back to them
- * 	revisit with rendertext blended
- * 	figure out a good resolutionpt/scale mix to display correctly
- * string formatting prints
  * Sprite component
 	sprite
 		calls graphics to load const char* src
@@ -51,6 +47,7 @@ typedef struct font{
 typedef struct fontHandler{
 	char* charList;
 	char* activeFont;
+	font* fnt;
 	struct map* list;
 }fontHandler;
 
@@ -79,8 +76,14 @@ void drawRectV4(struct v4, uint8_t p);
 void drawRect(float x1, float y1, float x2, float y2, uint8_t p);
 
 void drawTextV2(struct v2 pos, char* text);
+void drawTextV2C(struct v2 pos, char* text, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 void drawText(float x, float y, char* text);
+void drawTextC(float x, float y, char* text, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+void drawTextEX(float x, float y, int32_t n, ...);
 void drawCharacter(char c, SDL_Rect* dest, float startX, float cSize, font* f);
+void drawCharacterC(char c, SDL_Rect* dest, float startX, float cSize, font* f, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+void resetFontGlypthBlend(font* f);
+SDL_Texture* handlWhitespace(char c, SDL_Rect* dest, float startX, float cSize, font* f);
 
 void fontHandlerInit();
 void loadFont(const char* src);
