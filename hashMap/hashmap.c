@@ -118,6 +118,16 @@ void mapRemove(map* m, const char* key){
 	hlNodeFree(temp);
 }
 
+void mapClear(map* m){
+	mapIterator* mit = mapIteratorInit(m);
+	while(mit->index != -1){
+		free(mit->current->val);
+		mit->current->val = NULL;
+		mapIteratorNext(mit);
+	}
+	mapIteratorClose(mit);
+}
+
 void hlNodeFree(hlNode* n){
 	while(n!=NULL){
 		if (n->val != NULL){

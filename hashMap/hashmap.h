@@ -38,6 +38,8 @@ void* mapGet(map* m, const char* key);
 
 void mapRemove(map* m, const char* key);
 
+void mapClear(map* m);
+
 void mapClose(map* m);
 
 mapIterator* mapIteratorInit(map* m);
