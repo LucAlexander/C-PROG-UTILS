@@ -8,7 +8,7 @@
 
 static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
-static view renderView = {0, 0, 0, 0};
+static view renderView = {0, 0, 0, 0, 0, 0};
 static fontHandler fonts = {NULL, NULL, NULL, NULL};
 
 void graphicsInit(uint32_t width, uint32_t height, const char* windowTitle){
@@ -49,6 +49,28 @@ void renderSetView(view v){
 	renderView = v;
 	const SDL_Rect port = {v.px, v.py, v.pw, v.ph};
 	SDL_RenderSetViewport(renderer, &port);
+}
+
+v2 viewToWorldV2(v2 coords){
+	coords.x += renderView.x;
+	coords.y += renderView.y;
+	return coords;
+}
+
+v2 worldToViewV2(v2 coords){
+	coords.x -= renderView.x;
+	coords.y -= renderView.y;
+	return coords;
+}
+
+v2 viewToWorld(float x, float y){
+	v2 a = {x,y};
+	return viewToWorldV2(a);
+}
+
+v2 worldToView(float x, float y){
+	v2 a = {x,y};
+	return worldToViewV2(a);
 }
 
 void renderFlip(){

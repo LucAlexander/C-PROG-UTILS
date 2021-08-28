@@ -27,6 +27,24 @@ void mouseScrollEvent(int8_t dir){
 	inp.scrollDir = dir;
 }
 
+void mouseMoveEvent(int32_t x, int32_t y){
+	inp.mouseX = x;
+	inp.mouseY = y;
+}
+
+int32_t mouseX(){
+	return inp.mouseX;
+}
+
+int32_t mouseY(){
+	return inp.mouseY;
+}
+
+v2 mousePos(){
+	v2 a = {inp.mouseX, inp.mouseY};
+	return a;
+}
+
 void mouseUpEvent(const SDL_Event event){
 	inp.releasedMouseButtons[event.button.button-1] = true;
 	inp.heldMouseButtons[event.button.button-1] = false;

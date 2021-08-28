@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <inttypes.h>
 
+struct v2;
 
 typedef struct input{
 	bool heldKeys[256];
@@ -15,11 +16,19 @@ typedef struct input{
 	bool pressedMouseButtons[5];
 	bool releasedMouseButtons[5];
 	int8_t scrollDir;
+	int32_t mouseX;
+	int32_t mouseY;
 }input;
 
 void inputInit();
 
 void newInputFrame();
+
+void mouseMoveEvent(int32_t x, int32_t y);
+
+int32_t mouseX();
+int32_t mouseY();
+struct v2 mousePos();
 
 void mouseScrollEvent(int8_t);
 
