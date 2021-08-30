@@ -3,7 +3,7 @@
 #include "llist.h"
 
 llNode* llNodeInit(void* data, size_t size){
-	llNode* n = (llNode*)malloc(sizeof(llNode));
+	llNode* n = malloc(sizeof(llNode));
 	n->next = NULL;
 	n->data = malloc(size);
 	memcpy(n->data, data, size);
@@ -11,7 +11,7 @@ llNode* llNodeInit(void* data, size_t size){
 }
 
 LinkedList* llInit(size_t size){
-	LinkedList* ll = (LinkedList*)malloc(sizeof(LinkedList));
+	LinkedList* ll = malloc(sizeof(LinkedList));
 	ll->head = NULL;
 	ll->last = NULL;
 	ll->length = 0;
