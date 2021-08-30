@@ -51,6 +51,27 @@ void renderSetView(view v){
 	SDL_RenderSetViewport(renderer, &port);
 }
 
+void toggleFullscreen(){
+	uint32_t flags = (SDL_GetWindowFlags(window) ^ SDL_WINDOW_FULLSCREEN_DESKTOP);
+	if (SDL_SetWindowFullscreen(window, flags) < 0){
+		printf("[!] Toggling fullscreen mode failed\n");
+		return;
+	}
+	int32_t x = 0;
+	int32_t y = 0;
+	SDL_GetWindowSize(window, &x, &y);
+	if ((flags & SDL_WINDOW_FULLSCREEN_DESKTOP) != 0){
+		/*
+		LINEAR WILL INTERPOLATE COLORS BETWEEN PIXELS
+		0 IS STANDARD FOR PIXEL ART
+		*/
+		//SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+		//SDL_SetHint (SDL_HINT_RENDER_SCALE_QUALITY, 0);
+		SDL_RenderSetLogicalSize(renderer, x, y);
+	}
+	SDL_SetWindowSize(window, x, y);
+}
+
 v2 viewToWorldV2(v2 coords){
 	coords.x += renderView.x;
 	coords.y += renderView.y;

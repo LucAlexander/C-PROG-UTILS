@@ -58,6 +58,8 @@ SDL_Texture* getTexture(const char* src);
 
 void renderSetView(view v);
 
+void toggleFullscreen();
+
 struct v2 viewToWorldV2(struct v2 coords);
 struct v2 worldToViewV2(struct v2 coords);
 struct v2 viewToWorld(float x, float y);
