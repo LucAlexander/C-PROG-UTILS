@@ -3,7 +3,7 @@
 #include "stack.h"
 
 Stack* stackInit(size_t size){
-	Stack* stack = (Stack*)malloc(sizeof(Stack*));
+	Stack* stack = malloc(sizeof(Stack*));
 	stack->data = malloc(size);
 	stack->size = size;
 	stack->capacity = 1;
