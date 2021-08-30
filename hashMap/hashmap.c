@@ -9,7 +9,7 @@
 #include <winbase.h>
 
 map* mapInit(size_t size){
-	map* m = (map*)malloc(sizeof(map));
+	map* m = malloc(sizeof(map));
 	m->capacity = 32;
 	m->valSize = size;
 	m->data = calloc(m->capacity, sizeof(hlNode*));
@@ -17,7 +17,7 @@ map* mapInit(size_t size){
 }
 
 hlNode* hlNodeInit(size_t size, const char* key, void* value){
-	hlNode* newNode = (hlNode*)malloc(sizeof(hlNode));
+	hlNode* newNode = malloc(sizeof(hlNode));
 	newNode->key = strdup(key);
 	newNode->next = NULL;
 	newNode->val = NULL;
@@ -157,7 +157,7 @@ void mapClose(map* m){
 }
 
 mapIterator* mapIteratorInit(map* m){
-	mapIterator* n = (mapIterator*)malloc(sizeof(mapIterator));
+	mapIterator* n = malloc(sizeof(mapIterator));
 	n->m = m;
 	uint32_t i;
 	for (i = 0;i<m->capacity && m->data[i]==NULL;++i){}
