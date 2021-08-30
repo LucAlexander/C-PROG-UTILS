@@ -14,7 +14,7 @@ darr* darrInit(size_t s){
 }
 
 void darrResize(darr* d){
-	d->data = malloc(d->capacity*2*d->size);
+	d->data = realloc(d->data, d->capacity*2*d->size);
 	d->capacity*=2;
 }
 
@@ -23,7 +23,7 @@ void darrReserve(darr* d, uint32_t count){
 	if (accounted >= count){
 		return;
 	}
-	d->data = malloc(d->size*(d->capacity+(count-accounted)));
+	d->data = realloc(d->data, d->size*(d->capacity+(count-accounted)));
 	d->capacity+=(count-accounted);
 }
 
