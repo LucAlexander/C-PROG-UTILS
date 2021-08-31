@@ -150,8 +150,8 @@ void drawRect(float x1, float y1, float x2, float y2, uint8_t p){
 	SDL_FRect bound = {
 		x1-renderView.x,
 		y1-renderView.y,
-	       	x2+renderView.x-x1-renderView.x,
-	       	y2+renderView.y-y1-renderView.y
+	       	x2-x1-renderView.x,
+	       	y2-y1-renderView.y
 	};
 	if (p & FILL){
 		SDL_RenderFillRectF(renderer, &bound);
