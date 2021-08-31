@@ -6,16 +6,9 @@
 #include <SDL2/SDL_ttf.h>
 #include <inttypes.h>
 
-/*TODO
- * Sprite component
-	sprite
-		calls graphics to load const char* src
-		responsible for freeing texture data
- * come back to audio at some point it hust wasnt working at all 
-*/
-
 struct v2;
 struct v4;
+struct v4B;
 struct map;
 
 enum RECT_DRAW_PARAMS{
@@ -78,9 +71,15 @@ void blitSurfaceEXF(SDL_Texture* texture, SDL_Rect* srcRect, SDL_FRect destRect,
 void drawLineV2(struct v2, struct v2);
 void drawLine(float x, float y, float xx, float yy);
 
+// DIMENSION [X, Y, W, H] DRAWING
 void drawRectV2(struct v2, struct v2, uint8_t p);
 void drawRectV4(struct v4, uint8_t p);
 void drawRect(float x1, float y1, float x2, float y2, uint8_t p);
+// BOUNDS [LEFT TOP RIGHT BOTTOM] DRAWING
+void drawRectV2B(struct v2, struct v2, uint8_t p);
+void drawRectV4B(struct v4B, uint8_t p);
+void drawRectB(float x1, float y1, float x2, float y2, uint8_t p);
+
 
 void drawTextV2(struct v2 pos, char* text);
 void drawTextV2C(struct v2 pos, char* text, uint8_t r, uint8_t g, uint8_t b, uint8_t a);

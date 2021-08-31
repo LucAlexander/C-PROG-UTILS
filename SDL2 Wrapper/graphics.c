@@ -143,10 +143,33 @@ void drawRectV2(v2 a, v2 b, uint8_t p){
 }
 
 void drawRectV4(v4 r, uint8_t p){
-	drawRect(r.left, r.top, r.right, r.bottom, p);
+	drawRect(r.x, r.y, r.w, r.h, p);
 }
 
 void drawRect(float x1, float y1, float x2, float y2, uint8_t p){
+	SDL_FRect bound = {
+		x1-renderView.x,
+		y1-renderView.y,
+	       	x2,
+	       	y2
+	};
+	if (p & FILL){
+		SDL_RenderFillRectF(renderer, &bound);
+	}
+	if (p & OUTLINE){
+		SDL_RenderDrawRectF(renderer, &bound);
+	}
+}
+
+void drawRectV2B(v2 a, v2 b, uint8_t p){
+	drawRectB(a.x, a.y, b.x, b.y, p);
+}
+
+void drawRectV4B(v4B r, uint8_t p){
+	drawRectB(r.left, r.top, r.right, r.bottom, p);
+}
+
+void drawRectB(float x1, float y1, float x2, float y2, uint8_t p){
 	SDL_FRect bound = {
 		x1-renderView.x,
 		y1-renderView.y,
