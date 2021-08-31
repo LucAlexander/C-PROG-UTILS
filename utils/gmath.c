@@ -24,6 +24,20 @@ float distancePoint(v2 a, v2 b){
 }
 
 uint32_t pointInRect(v2 p, v4 r){
+	if (r.w < 0){
+		r.w *= -1;
+		r.x -= r.w;
+	}
+	if (r.h < 0){
+		r.h *= -1;
+		r.y -= r.w;
+	}
+	return (p.x >= r.x && p.x <= r.x+r.w) && 
+		(p.y >= r.y && p.y <= r.y+r.h);
+
+}
+
+uint32_t pointInRectB(v2 p, v4B r){
 	if (r.left > r.right){
 		float temp = r.left;
 		r.left = r.right;
@@ -34,6 +48,6 @@ uint32_t pointInRect(v2 p, v4 r){
 		r.top = r.bottom;
 		r.bottom = temp;
 	}
-	return (p.x >= r.top && p.x <= r.right) && 
+	return (p.x >= r.left && p.x <= r.right) && 
 		(p.y >= r.top && p.y <= r.bottom);
 }
