@@ -36,6 +36,7 @@ void ecsInit(uint32_t n, ...){
 	ecs.entities.capacity = entInitial;
 	ecs.entities.masks = malloc(entInitial*sizeof(uint32_t));
 	ecs.entities.flags = malloc(entInitial*sizeof(uint32_t));
+	ecs.query.list = malloc(entInitial*sizeof(uint32_t));
 }
 
 uint32_t ecsGenerateEntityId(){
