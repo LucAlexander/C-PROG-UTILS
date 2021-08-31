@@ -40,7 +40,7 @@ void ecsInit(uint32_t n, ...){
 
 uint32_t ecsGenerateEntityId(){
 	if (ecs.idBacklog->count > 0){
-		return  *(uint32_t*)stackPop(ecs.idBacklog);
+		return *(uint32_t*)stackPop(ecs.idBacklog);
 	}
 	return ecs.entities.count++;
 }
@@ -88,7 +88,7 @@ uint32_t entContians(uint32_t eid, uint32_t cid){
 }
 
 void entDestroy(uint32_t eid){
-	if(ecs.entities.flags[eid] & ALIVE != 0){
+	if((ecs.entities.flags[eid] & ALIVE) != 0){
 		ecs.entities.flags[eid] &= ~ALIVE;
 		ecs.entities.masks[eid] = 0;
 		stackPush(ecs.idBacklog, &eid);
@@ -106,9 +106,10 @@ ComponentQuery* ecsQuery(uint32_t n, ...){
 	}
 	va_end(v);
 	for (i = 0;i<ecs.entities.count;++i){
-		if ((mask & ecs.entities.masks[i] == mask) && (ecs.entities.flags[i] & ALIVE != 0)){
+		if (((mask & ecs.entities.masks[i]) == mask) && ((ecs.entities.flags[i] & ALIVE) != 0)){
 			ecs.query.list[ecs.query.count++] = i;
 		}
 	}
 	return &ecs.query;
 }
+
