@@ -4,6 +4,7 @@
 #include "gtime.h"
 
 #include "graphics.h"
+#include "input.h"
 
 #include <stdio.h>
 
@@ -16,14 +17,16 @@ void gmain(){
 		640, 480
 	};
 	renderSetView(v);
-	uint32_t entity = entCreate();
-	v2 pos = {64, 64};
-	Hitbox hb = {
-		{0, 0, 64, 64}, 
-		{32, 32}
-	};
-	entAdd(entity, POS2D, &pos);
-	entAdd(entity, HITBOX, &hb);
+	for (uint32_t i = 0;i<25;++i){
+		uint32_t entity = entCreate();
+		v2 pos = {64+i*16, 64};
+		Hitbox hb = {
+			{0, 0, 64, 64}, 
+			{32, 32}
+		};
+		entAdd(entity, POS2D, &pos);
+		entAdd(entity, HITBOX, &hb);
+	}
 }
 
 void logicSystemsPre(){}
@@ -39,9 +42,28 @@ void logicSystems(){
 		hb->rect.x = pos->x - hb->offset.x;
 		hb->rect.y = pos->y - hb->offset.y;
 	}
+	if (keyPressed("A")){
+		for (i = 0;i<25;++i){
+			entDestroy(i);
+		}
+	}
+	if (keyPressed("S")){
+		for (i = 0;i<25;++i){
+			uint32_t entity = entCreate();
+			v2 pos = {64+i*16, 64};
+			Hitbox hb = {
+				{0, 0, 64, 64}, 
+				{32, 32}
+			};
+			entAdd(entity, POS2D, &pos);
+			entAdd(entity, HITBOX, &hb);
+		}
+	}
 }
 
-void logicSystemsPost(){}
+void logicSystemsPost(){
+	// write a system that finds instances which are not ali ve and have a sprite, and then free sprite data(texture*)
+}
 
 void renderSystems(){
 	ComponentQuery* q = ecsQuery(1, HITBOX);
@@ -52,3 +74,4 @@ void renderSystems(){
 		drawRectV4(hb->rect, OUTLINE);
 	}
 }
+

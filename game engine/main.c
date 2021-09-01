@@ -7,6 +7,7 @@
 #include "graphics.h"
 #include "input.h"
 #include "gsystems.h"
+#include "ecs.h"
 #include "gmath.h"
 #include "gtime.h"
 
@@ -54,6 +55,7 @@ int main(int argc, char** argv){
 			logicSystemsPre();
 			logicSystems();
 			logicSystemsPost();
+			ecsDestroyQueue();
 			newInputFrame();
 			renderClear();
 			renderSystems();
@@ -61,6 +63,7 @@ int main(int argc, char** argv){
 			renderFlip();
 		}
 	}
+	ecsClose();
 	graphicsClose();
 	printf("0\n");
 	return 0;    
