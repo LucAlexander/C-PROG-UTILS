@@ -65,7 +65,7 @@ uint32_t entCreate(){
 		ecsResize();
 	}
 	ecs.entities.masks[entityId] = 0;
-	ecs.entities.flags[entityId] = ALIVE;
+	ecs.entities.flags[entityId] = ALIVE | EXISTS;
 	return entityId;
 }
 
@@ -81,18 +81,44 @@ void entAdd(uint32_t eid, uint32_t cid, void* data){
 }
 
 void entRemove(uint32_t eid, uint32_t cid){
+	ecsFreeComponent(eid, cid);
 	ecs.entities.masks[eid] &= ~(1<<cid);
 }
 
-uint32_t entContians(uint32_t eid, uint32_t cid){
+uint32_t entContains(uint32_t eid, uint32_t cid){
 	return ecs.entities.masks[eid] & (1<<cid);
 }
 
 void entDestroy(uint32_t eid){
 	if((ecs.entities.flags[eid] & ALIVE) != 0){
 		ecs.entities.flags[eid] &= ~ALIVE;
-		ecs.entities.masks[eid] = 0;
-		stackPush(ecs.idBacklog, &eid);
+	}
+}
+
+void ecsFreeComponent(uint32_t eid, uint32_t cid){
+	if (entContains(eid, cid)){
+		void* memLocation = entGet(eid, cid);
+		free(memLocation);
+		memLocation = NULL;
+	}
+}
+
+void ecsClearEntityComponentData(uint32_t eid){
+	ecs.entities.masks[eid] = 0;
+	ecs.entities.flags[eid] = 0;
+	stackPush(ecs.idBacklog, &eid);
+	for(uint32_t i = 0;i<ecs.components.typeCount;++i){
+		ecsFreeComponent(eid, i);
+	}
+}
+
+void ecsDestroyQueue(){
+	uint32_t eid;
+	for (eid = 0;eid<ecs.entities.count;++eid){
+		uint32_t f = ecs.entities.flags[eid];
+		if ((f & ALIVE)==0 && (f & EXISTS)){
+			ecsClearEntityComponentData(eid);
+		}
 	}
 }
 
@@ -114,3 +140,36 @@ ComponentQuery* ecsQuery(uint32_t n, ...){
 	return &ecs.query;
 }
 
+ComponentQuery* ecsQueryAlive(uint8_t alive, uint32_t n, ...){
+	ecs.query.count = 0;
+	uint32_t mask = 0;
+	uint32_t i;
+	va_list v;
+	va_start(v, n);
+	for (i = 0;i<n;++i){
+		mask |= (1 << va_arg(v, uint32_t));
+	}
+	va_end(v);
+	for (i = 0;i<ecs.entities.count;++i){
+		if (((mask & ecs.entities.masks[i])==mask)&&((ecs.entities.flags[i]&ALIVE)==alive)){
+			ecs.query.list[ecs.query.count++] = i;
+		}
+	}
+	return &ecs.query;
+}
+
+void ecsClose(){
+	free(ecs.components.data);
+	free(ecs.components.sizes);
+	free(ecs.components.offsets);
+	ecs.components.sizes = NULL;
+	ecs.components.data = NULL;
+	ecs.components.offsets = NULL;
+	free(ecs.entities.masks);
+	free(ecs.entities.flags);
+	ecs.entities.masks = NULL;
+	ecs.entities.flags = NULL;
+	free(ecs.query.list);
+	ecs.query.list = NULL;
+	stackFree(ecs.idBacklog);
+}

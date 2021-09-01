@@ -2,11 +2,13 @@
 #define ECS_H
 
 #include <inttypes.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include "stack.h"
 
 enum{
-	ALIVE = 1
+	ALIVE = 1,
+	EXISTS = 2
 } ENT_FLAGS;
 
 typedef struct{
@@ -51,11 +53,19 @@ void entAdd(uint32_t eid, uint32_t cid, void* data);
 
 void entRemove(uint32_t eid, uint32_t cid);
 
-uint32_t entContians(uint32_t eid, uint32_t cid);
+uint32_t entContains(uint32_t eid, uint32_t cid);
+
+void ecsFreeComponent(uint32_t eid, uint32_t cid);
+
+void ecsClearEntityComponentData(uint32_t eid);
 
 void entDestroy(uint32_t eid);
 
+void ecsDestroyQueue();
+
 ComponentQuery* ecsQuery(uint32_t n, ...);
 
+ComponentQuery* ecsQueryAlive(uint8_t alive, uint32_t n, ...);
 
+void ecsClose();
 #endif
