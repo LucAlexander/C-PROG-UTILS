@@ -31,5 +31,7 @@ void stackPush(Stack* stack, void* data){
 
 void stackFree(Stack* stack){
 	free(stack->data);
+	stack->data = NULL;
 	free(stack);
+	stack = NULL;
 }
