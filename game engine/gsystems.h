@@ -9,4 +9,14 @@ void logicSystemsPost();
 
 void renderSystems();
 
+// ENGINE ESSENTIAL SYSTEMS
+
+// SPRITE AND ANIMATION
+
+void sysAnimateSprites();
+
+void sysDrawSprites();
+
+void sysFreeSpriteData();
+
 #endif
