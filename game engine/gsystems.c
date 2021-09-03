@@ -1,3 +1,4 @@
+
 #include "gsystems.h"
 #include "gcomponents.h"
 #include "ecs.h"
@@ -71,6 +72,10 @@ void logicSystems(){
 		for (i = 0;i<25;++i){
 			entDestroy(i);
 		}
+		ecsPrint();
+	}
+	if (keyPressed("D")){
+		ecsPrint();
 	}
 	if (keyPressed("S")){
 		for (i = 0;i<25;++i){
@@ -89,6 +94,7 @@ void logicSystems(){
 			entAdd(entity, HITBOX, &hb);
 			entAdd(entity, SPRITE, &spr);
 		}
+		ecsPrint();
 	}
 }
 
