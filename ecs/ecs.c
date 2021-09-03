@@ -34,9 +34,9 @@ void ecsInit(uint32_t n, ...){
 	memcpy(ecs.components.offsets, o, n*sizeof(size_t));
 	ecs.entities.count = 0;
 	ecs.entities.capacity = entInitial;
-	ecs.entities.masks = malloc(entInitial*sizeof(uint32_t));
-	ecs.entities.flags = malloc(entInitial*sizeof(uint32_t));
-	ecs.query.list = malloc(entInitial*sizeof(uint32_t));
+	ecs.entities.masks = calloc(entInitial,sizeof(uint64_t));
+	ecs.entities.flags = calloc(entInitial,sizeof(uint32_t));
+	ecs.query.list = calloc(entInitial,sizeof(uint32_t));
 }
 
 uint32_t ecsGenerateEntityId(){
@@ -48,7 +48,7 @@ uint32_t ecsGenerateEntityId(){
 
 void ecsResize(){
 	uint32_t* flagResize = realloc(ecs.entities.flags, ecs.entities.capacity*sizeof(uint32_t)*2);
-	uint32_t* maskResize = realloc(ecs.entities.masks, ecs.entities.capacity*sizeof(uint32_t)*2);
+	uint64_t* maskResize = realloc(ecs.entities.masks, ecs.entities.capacity*sizeof(uint64_t)*2);
 	uint32_t* queryResize = realloc(ecs.query.list, ecs.entities.capacity*sizeof(uint32_t)*2);
 	void* dataResize = realloc(ecs.components.data, ecs.components.capacity*ecs.components.size*2);
 	ecs.entities.flags = flagResize;
@@ -124,7 +124,7 @@ void ecsDestroyQueue(){
 
 ComponentQuery* ecsQuery(uint32_t n, ...){
 	ecs.query.count = 0;
-	uint32_t mask = 0;
+	uint64_t mask = 0;
 	uint32_t i;
 	va_list v;
 	va_start(v, n);
@@ -142,7 +142,7 @@ ComponentQuery* ecsQuery(uint32_t n, ...){
 
 ComponentQuery* ecsQueryAlive(uint8_t alive, uint32_t n, ...){
 	ecs.query.count = 0;
-	uint32_t mask = 0;
+	uint64_t mask = 0;
 	uint32_t i;
 	va_list v;
 	va_start(v, n);
@@ -172,4 +172,37 @@ void ecsClose(){
 	free(ecs.query.list);
 	ecs.query.list = NULL;
 	stackFree(ecs.idBacklog);
+}
+
+void ecsPrint(){
+	printf("\n_____________________________________________________________\n");
+	uint32_t i;
+	for (i = 0;i<ecs.entities.count;++i){
+		printf("%u FLAGS: ",i);
+		uint32_t n = ecs.entities.flags[i];
+		int32_t r[32]={0},k=0;
+		while(n>0){
+			r[k]=n%2;
+			n=n/2;
+			k++;
+		}
+		for(;k>=0;--k){
+			printf("%d",r[k]);
+		}
+		printf(" : %u\n MASKS: ", ecs.entities.flags[i]);
+			n = ecs.entities.masks[i];
+			int32_t j[64]={0};
+			k=0;
+			while(n>0){
+				j[k]=n%2;
+				n=n/2;
+				k++;
+			}
+			for(;k>=0;--k){
+				printf("%d",j[k]);
+			}
+			printf(" ");
+		printf("\n");
+	}
+	printf("\n_____________________________________________________________\n");
 }

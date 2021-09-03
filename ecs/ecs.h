@@ -14,7 +14,7 @@ enum{
 typedef struct{
 	uint32_t count;
 	uint32_t capacity;
-	uint32_t* masks;
+	uint64_t* masks;
 	uint32_t* flags;
 } Entities;
 
@@ -68,4 +68,7 @@ ComponentQuery* ecsQuery(uint32_t n, ...);
 ComponentQuery* ecsQueryAlive(uint8_t alive, uint32_t n, ...);
 
 void ecsClose();
+
+void ecsPrint();
+
 #endif
