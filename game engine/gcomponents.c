@@ -57,6 +57,10 @@ void spriteInit(Sprite* s, SDL_Texture* t, uint32_t frameSpeed, uint32_t w, uint
 	SDL_QueryTexture(t, NULL, NULL, &s->textureW, &s->textureH);
 	s->currentAnimation = -1;
 	s->play = false;
+	s->visible = true;
+	s->angle = 0;
+	SDL_FPoint point = {w/2, h/2};
+	s->center = point;
 }
 
 void addSpriteAnimation(Sprite* s, Animation a){
@@ -71,7 +75,8 @@ void playAnimation(Sprite* s, uint32_t index){
 }
 
 void drawSprite(Sprite* s, v2* pos){
-	//TODO extend blit surface params[angle etc]
-	SDL_Rect dest = {pos->x, pos->y, s->displayW, s->displayH};
-	blitSurface(s->texture, &s->drawBound, dest);
+	if(s->visible){
+		SDL_FRect dest = {pos->x-s->center.x, pos->y-s->center.y, s->displayW, s->displayH};
+		blitSurfaceEXF(s->texture, &s->drawBound, dest, s->angle, &s->center, SDL_FLIP_NONE);
+	}
 }

@@ -43,6 +43,9 @@ typedef struct Sprite{
 	int32_t textureH;
 	int32_t currentAnimation;
 	bool play;
+	bool visible;
+	double angle;
+	SDL_FPoint center;
 }Sprite;
 
 void spriteInit(Sprite* s, SDL_Texture*, uint32_t frameSpeed, uint32_t w, uint32_t h);
