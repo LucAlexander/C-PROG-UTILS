@@ -61,4 +61,7 @@ void moveSpriteAnimationBound(Sprite*);
 void loopSpriteAnimationBuffer(Sprite* s);
 
 void drawSprite(Sprite* s, v2* pos);
+
+void drawSpriteV3(Sprite* s, v3* pos);
+
 #endif

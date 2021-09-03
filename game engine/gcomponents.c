@@ -80,3 +80,8 @@ void drawSprite(Sprite* s, v2* pos){
 		blitSurfaceEXF(s->texture, &s->drawBound, dest, s->angle, &s->center, SDL_FLIP_NONE);
 	}
 }
+
+void drawSpriteV3(Sprite* s, v3* pos){
+	v2 altered = {pos->x, pos->y-(pos->z/2)};
+	drawSprite(s, &altered);
+}

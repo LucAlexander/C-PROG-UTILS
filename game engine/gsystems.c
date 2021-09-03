@@ -34,6 +34,15 @@ void gmain(){
 		entAdd(entity, HITBOX, &hb);
 		entAdd(entity, SPRITE, &spr);
 	}
+	uint32_t greenSqr = entCreate();
+	v3 pos = {128, 128, 32};
+	Hitbox hb = {{0, 0, 32, 32}, {16, 16}};
+	Sprite s;
+	spriteInit(&s, getTexture("green.png"), 1, 32, 32);
+	s.angle = -405;
+	entAdd(greenSqr, POS3D, &pos);
+	entAdd(greenSqr, HITBOX, &hb);
+	entAdd(greenSqr, SPRITE, &s);
 }
 
 void logicSystemsPre(){}
@@ -47,6 +56,13 @@ void logicSystems(){
 	uint32_t i;
 	for(i = 0;i<q->count;++i){
 		v2* pos = entGet(q->list[i], POS2D);
+		Hitbox* hb = entGet(q->list[i], HITBOX);
+		hb->rect.x = pos->x - hb->offset.x;
+		hb->rect.y = pos->y - hb->offset.y;
+	}
+	q = ecsQuery(2, POS3D, HITBOX);
+	for(i = 0;i<q->count;++i){
+		v3* pos = entGet(q->list[i], POS3D);
 		Hitbox* hb = entGet(q->list[i], HITBOX);
 		hb->rect.x = pos->x - hb->offset.x;
 		hb->rect.y = pos->y - hb->offset.y;
@@ -105,12 +121,18 @@ void sysAnimateSprites(){
 }
 
 void sysDrawSprites(){
-	ComponentQuery* q = ecsQuery(2, POS2D, SPRITE);
+	ComponentQuery* q2 = ecsQuery(2, POS2D, SPRITE);
 	uint32_t i;
-	for (i = 0;i<q->count;++i){
-		Sprite* spr = entGet(q->list[i], SPRITE);
-		v2* pos = entGet(q->list[i], POS2D);
+	for (i = 0;i<q2->count;++i){
+		Sprite* spr = entGet(q2->list[i], SPRITE);
+		v2* pos = entGet(q2->list[i], POS2D);
 		drawSprite(spr, pos);
+	}
+	ComponentQuery* q3 = ecsQuery(2, POS3D, SPRITE);
+	for (i = 0;i<q3->count;++i){
+		Sprite* spr = entGet(q3->list[i], SPRITE);
+		v3* pos = entGet(q3->list[i], POS3D);
+		drawSpriteV3(spr, pos);
 	}
 }
 
