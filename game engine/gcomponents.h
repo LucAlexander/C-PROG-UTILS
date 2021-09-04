@@ -13,7 +13,8 @@ enum COMPONENT_ID{
 	HITBOX=0,
 	POS2D=1,
 	POS3D=2,
-	SPRITE=3
+	SPRITE=3,
+	GUINODE=4
 };
 
 // HITBOX
@@ -63,5 +64,35 @@ void loopSpriteAnimationBuffer(Sprite* s);
 void drawSprite(Sprite* s, v2* pos);
 
 void drawSpriteV3(Sprite* s, v3* pos);
+
+// GUI ELEMENTS
+
+typedef struct Text{
+	const char* content;
+	v2 pos;
+	v4 color;
+}Text;
+
+typedef struct GuiNode{
+	uint8_t registry;
+	// bit 1
+	Text textContent;
+	// bit 2
+	v4 panel;
+	v4 panelColor;
+	// bit 3 = pressable
+	// bit 4 = visible
+}GuiNode;
+
+void guiNodeTextContent(GuiNode* n, Text t);
+void guiNodeRemoveTextContent(GuiNode* n);
+void guiNodePanel(GuiNode* n, v4 dimensions, v4 color);
+void guiNodeRemovePanel(GuiNode* n);
+void guiNodePressable(GuiNode* n, bool pressable);
+void guiNodeVisible(GuiNode* n, bool visible);
+
+void guiNodeDraw(GuiNode* n);
+void guiNodeDrawPanel(GuiNode* n);
+void guiNodeDrawText(GuiNode* n);
 
 #endif

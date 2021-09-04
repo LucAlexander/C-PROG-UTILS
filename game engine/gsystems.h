@@ -19,4 +19,8 @@ void sysDrawSprites();
 
 void sysFreeSpriteData();
 
+// GUI
+
+void sysDrawGuiNodes();
+
 #endif

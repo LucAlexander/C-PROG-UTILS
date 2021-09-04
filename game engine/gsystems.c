@@ -11,15 +11,17 @@
 #include <string.h>
 
 void gmain(){
-	ecsInit(4, sizeof(Hitbox), sizeof(v2), sizeof(v3), sizeof(Sprite));
+	ecsInit(5, sizeof(Hitbox), sizeof(v2), sizeof(v3), sizeof(Sprite), sizeof(GuiNode));
 	// TEST CODE
 	view v = {
 		0, 0,
 		0, 0, 
 		640, 480
 	};
+	loadFont("default.ttf");
+	setFont("default.ttf");
 	renderSetView(v);
-	for (uint32_t i = 0;i<25;++i){
+	for (uint32_t i = 0;i<512;++i){
 		uint32_t entity = entCreate();
 		v2 pos = {64+i*80, 64};
 		Hitbox hb = {
@@ -41,9 +43,16 @@ void gmain(){
 	Sprite s;
 	spriteInit(&s, getTexture("green.png"), 1, 32, 32);
 	s.angle = -405;
+	GuiNode node;
+	Text txt = {"Text Content", {160, 160}, {128, 256, 0, 200}};
+	v4 dim = {160, 160, 200, 200};
+	v4 col = {100, 100, 100, 255};
+	guiNodeTextContent(&node, txt);
+	guiNodePanel(&node, dim, col);
 	entAdd(greenSqr, POS3D, &pos);
 	entAdd(greenSqr, HITBOX, &hb);
 	entAdd(greenSqr, SPRITE, &s);
+	entAdd(greenSqr, GUINODE, &node);
 }
 
 void logicSystemsPre(){}
@@ -69,16 +78,16 @@ void logicSystems(){
 		hb->rect.y = pos->y - hb->offset.y;
 	}
 	if (keyPressed("A")){
-		for (i = 0;i<25;++i){
+		for (i = 0;i<512;++i){
 			entDestroy(i);
 		}
-		ecsPrint();
+		//ecsPrint();
 	}
 	if (keyPressed("D")){
 		ecsPrint();
 	}
 	if (keyPressed("S")){
-		for (i = 0;i<25;++i){
+		for (i = 0;i<512;++i){
 			uint32_t entity = entCreate();
 			v2 pos = {64+i*80, 64};
 			Hitbox hb = {
@@ -94,7 +103,7 @@ void logicSystems(){
 			entAdd(entity, HITBOX, &hb);
 			entAdd(entity, SPRITE, &spr);
 		}
-		ecsPrint();
+		//ecsPrint();
 	}
 }
 
@@ -104,6 +113,7 @@ void logicSystemsPost(){
 
 void renderSystems(){
 	sysDrawSprites();
+	sysDrawGuiNodes();
 
 	//TEST CODE
 	ComponentQuery* q = ecsQuery(1, HITBOX);
@@ -149,7 +159,16 @@ void sysFreeSpriteData(){
 		Sprite* spr = entGet(q->list[i], SPRITE);
 		SDL_DestroyTexture(spr->texture);
 		spr->texture = NULL;
-
 	}
 }
 
+// GUI
+
+void sysDrawGuiNodes(){
+	ComponentQuery* q = ecsQuery(1, GUINODE);
+	uint32_t i;
+	for (i = 0;i<q->count;++i){
+		GuiNode* n = entGet(q->list[i], GUINODE);
+		guiNodeDraw(n);
+	}
+}

@@ -85,3 +85,64 @@ void drawSpriteV3(Sprite* s, v3* pos){
 	v2 altered = {pos->x, pos->y-(pos->z/2)};
 	drawSprite(s, &altered);
 }
+
+// GUI
+
+void guiNodeTextContent(GuiNode* n, Text t){
+	n->textContent = t;
+	n->registry |= 1;
+}
+
+void guiNodeRemoveTextContent(GuiNode* n){
+	n->registry &= ~(1);
+}
+
+void guiNodePanel(GuiNode* n, v4 dimensions, v4 color){
+	n->panel = dimensions;
+	n->panelColor = color;
+	n->registry |= 2;
+}
+
+void guiNodeRemovePanel(GuiNode* n){
+	n->registry &= ~(2);
+}
+
+void guiNodePressable(GuiNode* n, bool pressable){
+	if(pressable){
+		n->registry |= (1<<2);
+		return;
+	}
+	n->registry &= ~(1<<2);
+}
+
+void guiNodeVisible(GuiNode* n, bool visible){
+	if (visible){
+		n->registry |= (1<<3);
+		return;
+	}
+	n->registry &= ~(1<<3);
+}
+
+
+void guiNodeDrawPanel(GuiNode* n){
+	if (n->registry & 2){
+		v4* c = &n->panelColor;
+		renderSetColor(c->x, c->y, c->w, c->h);
+		drawRectV4(n->panel, FILL);
+		renderSetColor(0, 0, 0, 0);
+	}
+}
+
+void guiNodeDrawText(GuiNode* n){
+	if (n->registry & 1){
+		Text* temp = &n->textContent;
+		drawTextV2C(temp->pos, (char*)temp->content, temp->color.x, temp->color.y, temp->color.w, temp->color.h);
+	}
+}
+
+void guiNodeDraw(GuiNode* n){
+	if (n->registry & (1<<3)){
+		guiNodeDrawPanel(n);
+		guiNodeDrawText(n);
+	}
+}
