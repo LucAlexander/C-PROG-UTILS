@@ -14,13 +14,12 @@ void renderSystems();
 // SPRITE AND ANIMATION
 
 void sysAnimateSprites();
-
 void sysDrawSprites();
-
 void sysFreeSpriteData();
 
 // GUI
 
 void sysDrawGuiNodes();
+void sysFreeGuiNodeData();
 
 #endif

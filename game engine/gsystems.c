@@ -1,4 +1,3 @@
-
 #include "gsystems.h"
 #include "gcomponents.h"
 #include "ecs.h"
@@ -48,7 +47,18 @@ void gmain(){
 	v4 dim = {160, 160, 200, 200};
 	v4 col = {100, 100, 100, 255};
 	guiNodeTextContent(&node, txt);
+	guiNodeTextContent(&node, txt);
+	guiNodeRemoveTextContent(&node);
 	guiNodePanel(&node, dim, col);
+	guiNodePanel(&node, dim, col);
+	guiNodeRemovePanel(&node);
+	guiNodeVisible(&node, true);
+	Sprite ts;
+	spriteInit(&ts, getTexture("green.png"), 1, 32, 32);
+	v2 tpos = {200, 200};
+	guiNodeTexture(&node, ts, tpos);
+	guiNodeTexture(&node, ts, tpos);
+	guiNodeRemoveTexture(&node);
 	entAdd(greenSqr, POS3D, &pos);
 	entAdd(greenSqr, HITBOX, &hb);
 	entAdd(greenSqr, SPRITE, &s);
@@ -81,7 +91,6 @@ void logicSystems(){
 		for (i = 0;i<512;++i){
 			entDestroy(i);
 		}
-		//ecsPrint();
 	}
 	if (keyPressed("D")){
 		ecsPrint();
@@ -103,12 +112,12 @@ void logicSystems(){
 			entAdd(entity, HITBOX, &hb);
 			entAdd(entity, SPRITE, &spr);
 		}
-		//ecsPrint();
 	}
 }
 
 void logicSystemsPost(){
 	sysFreeSpriteData();
+	sysFreeGuiNodeData();
 }
 
 void renderSystems(){
@@ -157,8 +166,7 @@ void sysFreeSpriteData(){
 	uint32_t i;
 	for(i = 0;i<q->count;++i){
 		Sprite* spr = entGet(q->list[i], SPRITE);
-		SDL_DestroyTexture(spr->texture);
-		spr->texture = NULL;
+		freeSpriteData(spr);
 	}
 }
 
@@ -172,3 +180,13 @@ void sysDrawGuiNodes(){
 		guiNodeDraw(n);
 	}
 }
+
+void sysFreeGuiNodeData(){
+	ComponentQuery* q = ecsQueryAlive(false, 1, GUINODE);
+	uint32_t i;
+	for(i = 0;i<q->count;++i){
+		GuiNode* n = entGet(q->list[i], GUINODE);
+		freeGuiNodeData(n);
+	}
+}
+

@@ -86,6 +86,11 @@ void drawSpriteV3(Sprite* s, v3* pos){
 	drawSprite(s, &altered);
 }
 
+void freeSpriteData(Sprite* s){
+	SDL_DestroyTexture(s->texture);
+	s->texture = NULL;
+}
+
 // GUI
 
 void guiNodeTextContent(GuiNode* n, Text t){
@@ -133,6 +138,12 @@ void guiNodeDrawPanel(GuiNode* n){
 	}
 }
 
+void guiNodeDrawTexture(GuiNode* n){
+	if (n->registry & (1<<4)){
+		drawSprite(&n->texture, &n->spritePos);
+	}
+}
+
 void guiNodeDrawText(GuiNode* n){
 	if (n->registry & 1){
 		Text* temp = &n->textContent;
@@ -143,6 +154,24 @@ void guiNodeDrawText(GuiNode* n){
 void guiNodeDraw(GuiNode* n){
 	if (n->registry & (1<<3)){
 		guiNodeDrawPanel(n);
+		guiNodeDrawTexture(n);
 		guiNodeDrawText(n);
 	}
 }
+
+void guiNodeTexture(GuiNode* n, Sprite t, v2 pos){
+	freeSpriteData(&n->texture);
+	n->texture = t;
+	n->spritePos = pos;
+	n->registry |= (1<<4);
+}
+
+void guiNodeRemoveTexture(GuiNode* n){
+	freeSpriteData(&n->texture);
+	n->registry &= ~(1<<4);
+}
+
+void freeGuiNodeData(GuiNode* n){
+	freeSpriteData(&n->texture);
+}
+
