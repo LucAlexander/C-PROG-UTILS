@@ -48,21 +48,22 @@ void gmain(){
 	v4 col = {100, 100, 100, 255};
 	guiNodeTextContent(&node, txt);
 	guiNodeTextContent(&node, txt);
-	guiNodeRemoveTextContent(&node);
+	//guiNodeRemoveTextContent(&node);
 	guiNodePanel(&node, dim, col);
 	guiNodePanel(&node, dim, col);
-	guiNodeRemovePanel(&node);
+	//guiNodeRemovePanel(&node);
 	guiNodeVisible(&node, true);
 	Sprite ts;
 	spriteInit(&ts, getTexture("green.png"), 1, 32, 32);
 	v2 tpos = {200, 200};
 	guiNodeTexture(&node, ts, tpos);
 	guiNodeTexture(&node, ts, tpos);
-	guiNodeRemoveTexture(&node);
+	//guiNodeRemoveTexture(&node);
 	entAdd(greenSqr, POS3D, &pos);
 	entAdd(greenSqr, HITBOX, &hb);
 	entAdd(greenSqr, SPRITE, &s);
 	entAdd(greenSqr, GUINODE, &node);
+	renderSetSpriteScale(2, 2);
 }
 
 void logicSystemsPre(){}
@@ -86,6 +87,9 @@ void logicSystems(){
 		Hitbox* hb = entGet(q->list[i], HITBOX);
 		hb->rect.x = pos->x - hb->offset.x;
 		hb->rect.y = pos->y - hb->offset.y;
+	}
+	if (keyPressed("F")){
+		toggleFullscreen();
 	}
 	if (keyPressed("A")){
 		for (i = 0;i<512;++i){
