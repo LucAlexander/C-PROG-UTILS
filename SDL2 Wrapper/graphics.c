@@ -11,6 +11,9 @@ static SDL_Renderer* renderer = NULL;
 static view renderView = {0, 0, 0, 0, 0, 0};
 static fontHandler fonts = {NULL, NULL, NULL, NULL};
 
+static float spriteScaleX = 1;
+static float spriteScaleY = 1;
+
 void graphicsInit(uint32_t width, uint32_t height, const char* windowTitle){
 	SDL_Init(SDL_INIT_VIDEO);
 	TTF_Init();
@@ -43,6 +46,12 @@ SDL_Texture* getTexture(const char* src){
 		printf("[!] Unable to load image \'%s\'\n",src);
 	}
 	return item;
+}
+
+void renderSetSpriteScale(float scaleX, float scaleY){
+	spriteScaleX = scaleX;
+	spriteScaleY = scaleY;
+	SDL_RenderSetScale(renderer, spriteScaleX, spriteScaleY);
 }
 
 void renderSetView(view v){
@@ -106,27 +115,33 @@ void renderSetColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a){
 	SDL_SetRenderDrawColor(renderer, r, g, b, a);
 }
 
+void formatDestRectToView(SDL_Rect* destRect){
+	destRect->x-=renderView.x;
+	destRect->y-=renderView.y;
+}
+
+void formatDestFRectToView(SDL_FRect* destRect){
+	destRect->x-=renderView.x;
+	destRect->y-=renderView.y;
+}
+
 void blitSurface(SDL_Texture* texture, SDL_Rect* srcRect, SDL_Rect destRect){
-	destRect.x-=renderView.x;
-	destRect.y-=renderView.y;
+	formatDestRectToView(&destRect);
 	SDL_RenderCopy(renderer, texture, srcRect, &destRect);
 }
 
 void blitSurfaceEX(SDL_Texture* texture, SDL_Rect* srcRect, SDL_Rect destRect, double angle, SDL_Point* center, SDL_RendererFlip flip){
-	destRect.x-=renderView.x;
-	destRect.y-=renderView.y;
+	formatDestRectToView(&destRect);
 	SDL_RenderCopyEx(renderer, texture, srcRect, &destRect, angle, center, flip);
 }
 
 void blitSurfaceF(SDL_Texture* texture, SDL_Rect* srcRect, SDL_FRect destRect){
-	destRect.x-=renderView.x;
-	destRect.y-=renderView.y;
+	formatDestFRectToView(&destRect);
 	SDL_RenderCopyF(renderer, texture, srcRect, &destRect);
 }
 
 void blitSurfaceEXF(SDL_Texture* texture, SDL_Rect* srcRect, SDL_FRect destRect, double angle, SDL_FPoint* center, SDL_RendererFlip flip){
-	destRect.x-=renderView.x;
-	destRect.y-=renderView.y;
+	formatDestFRectToView(&destRect);
 	SDL_RenderCopyExF(renderer, texture, srcRect, &destRect, angle, center, flip);
 }
 

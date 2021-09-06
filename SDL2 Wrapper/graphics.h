@@ -51,6 +51,8 @@ SDL_Texture* getTexture(const char* src);
 
 void renderSetView(view v);
 
+void renderSetSpriteScale(float scaleX, float scaleY);
+
 void toggleFullscreen();
 
 struct v2 viewToWorldV2(struct v2 coords);
@@ -62,6 +64,9 @@ void renderFlip();
 void renderClear();
 
 void renderSetColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+
+void formatDestRectToView(SDL_Rect* destRect);
+void formatDestFRectToView(SDL_FRect* destRect);
 
 void blitSurface(SDL_Texture* texture, SDL_Rect* srcRect, SDL_Rect destRect);
 void blitSurfaceEX(SDL_Texture* texture, SDL_Rect* srcRect, SDL_Rect destRect, double angle, SDL_Point* center, SDL_RendererFlip flip);
