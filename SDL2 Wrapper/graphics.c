@@ -11,6 +11,9 @@ static SDL_Renderer* renderer = NULL;
 static view renderView = {0, 0, 0, 0, 0, 0};
 static fontHandler fonts = {NULL, NULL, NULL, NULL};
 
+static uint32_t windowW = 1920;
+static uint32_t windowH = 1080;
+
 static float spriteScaleX = 1;
 static float spriteScaleY = 1;
 
@@ -26,6 +29,8 @@ void graphicsInit(uint32_t width, uint32_t height, const char* windowTitle){
 	SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_OPENGL, &window, &renderer);
 	SDL_SetWindowTitle(window, windowTitle);
 	view defaultView = {0, 0, width, height};
+	windowW = width;
+	windowH = height;
 	renderSetView(defaultView);
 	fileLoaderInit();
 	fontHandlerInit();
@@ -76,9 +81,9 @@ void toggleFullscreen(){
 		*/
 		//SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 		//SDL_SetHint (SDL_HINT_RENDER_SCALE_QUALITY, 0);
-		SDL_RenderSetLogicalSize(renderer, x, y);
+		//SDL_RenderSetLogicalSize(renderer, x, y);
 	}
-	SDL_SetWindowSize(window, x, y);
+	SDL_SetWindowSize(window, windowW, windowH);
 }
 
 v2 viewToWorldV2(v2 coords){
