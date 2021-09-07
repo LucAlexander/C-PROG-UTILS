@@ -96,6 +96,10 @@ void drawCharacterC(char c, SDL_Rect* dest, float startX, float cSize, font* f, 
 void resetFontGlypthBlend(font* f);
 SDL_Texture* handlWhitespace(char c, SDL_Rect* dest, float startX, float cSize, font* f);
 
+void textWidthCharEval(char c, uint32_t* longest, uint32_t* current);
+float getTextWidth(const char* c);
+float getTextHeight(const char* c);
+
 void fontHandlerInit();
 void loadFont(const char* src);
 void loadFontC(const char* src, uint8_t r, uint8_t g, uint8_t b, uint8_t a);

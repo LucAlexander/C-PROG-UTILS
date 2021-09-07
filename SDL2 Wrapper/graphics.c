@@ -1,7 +1,9 @@
+#define _GNU_SOURCE
 #include "graphics.h"
 #include "gmath.h"
 #include "fileLoader.h"
 #include "hashmap.h"
+#include "strutils.h"
 #include <string.h>
 
 #include <stdio.h>
@@ -391,3 +393,38 @@ void drawTextEX(float x, float y, int32_t n, ...){
 	resetFontGlyphBlend(fonts.fnt);
 	va_end(args);
 }
+
+void textWidthCharEval(char c, uint32_t* longest, uint32_t* current){
+	if (c=='\n'){
+		*longest = *current > *longest ? *current : *longest;
+		*current = 0;
+		return;
+	}
+	(*current)++;
+}
+
+float getTextWidth(const char* c){
+	uint32_t len = strlen(c);
+	uint32_t i;
+	uint32_t longest = 0;
+	uint32_t current = 0;
+	for(i=0;i<len;++i){
+		textWidthCharEval(c[i], &longest, &current);
+	}
+	longest = current > longest ? current : longest;
+	return fonts.fnt->scale*fonts.fnt->ptSize*longest;
+}
+
+float getTextHeight(const char* c){
+	uint32_t len = strlen(c);
+	uint32_t i;
+	uint32_t current = 1;
+	for(i =0;i<len;++i){
+		if (c[i]=='\n'){
+			printf("here\n");
+			current++;
+		}
+	}
+	return fonts.fnt->scale*fonts.fnt->ptSize*current;
+}
+
