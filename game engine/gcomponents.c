@@ -118,6 +118,14 @@ void guiNodePressable(GuiNode* n, bool pressable){
 		return;
 	}
 	n->registry &= ~(1<<2);
+	n->pressBound.x = 0;
+	n->pressBound.y = 0;
+	n->pressBound.w = 0;
+	n->pressBound.h = 0;
+}
+
+void guiNodeSetPressBound(GuiNode* n, v4 dimensions){
+	n->pressBound = dimensions;
 }
 
 void guiNodeVisible(GuiNode* n, bool visible){

@@ -9,6 +9,10 @@
 #include <stdio.h>
 #include <string.h>
 
+void func(){
+	printf("do action\n");
+}
+
 void gmain(){
 	ecsInit(5, sizeof(Hitbox), sizeof(v2), sizeof(v3), sizeof(Sprite), sizeof(GuiNode));
 	// TEST CODE
@@ -44,6 +48,7 @@ void gmain(){
 	s.angle = -405;
 	GuiNode node;
 	Text txt = {"Text Content", {160, 160}, {128, 256, 0, 200}};
+	printf("%.2f, %.2f\n", getTextWidth("Text Content"), getTextHeight("Text Content"));
 	v4 dim = {160, 160, 200, 200};
 	v4 col = {100, 100, 100, 255};
 	guiNodeTextContent(&node, txt);
@@ -53,6 +58,10 @@ void gmain(){
 	guiNodePanel(&node, dim, col);
 	//guiNodeRemovePanel(&node);
 	guiNodeVisible(&node, true);
+	guiNodePressable(&node, true);
+	guiNodeSetPressBound(&node, dim);
+	node.action = &func;
+	(*node.action)();
 	Sprite ts;
 	spriteInit(&ts, getTexture("green.png"), 1, 32, 32);
 	v2 tpos = {200, 200};
@@ -63,13 +72,16 @@ void gmain(){
 	entAdd(greenSqr, HITBOX, &hb);
 	entAdd(greenSqr, SPRITE, &s);
 	entAdd(greenSqr, GUINODE, &node);
-	renderSetSpriteScale(2, 2);
+	renderSetSpriteScale(1, 1);
 }
 
 void logicSystemsPre(){}
 
 void logicSystems(){
 	sysAnimateSprites();
+	if(mousePressed(1)){
+		sysPressButtons();
+	}
 
 
 	// TEST CODE
@@ -175,6 +187,19 @@ void sysFreeSpriteData(){
 }
 
 // GUI
+
+void sysPressButtons(){
+	ComponentQuery* q = ecsQuery(1, GUINODE);
+	uint32_t i;
+	v2 mp = mousePos();
+	for (i = 0;i<q->count;++i){
+		GuiNode* n = entGet(q->list[i], GUINODE);
+		if (pointInRect(worldToView(mp.x, mp.y), n->pressBound)){
+			(*n->action)();
+			return;
+		}
+	}
+}
 
 void sysDrawGuiNodes(){
 	ComponentQuery* q = ecsQuery(1, GUINODE);

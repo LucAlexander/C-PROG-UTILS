@@ -83,6 +83,8 @@ typedef struct GuiNode{
 	v4 panel;
 	v4 panelColor;
 	// bit 3 = pressable
+	v4 pressBound;
+	void (*action)(void);
 	// bit 4 = visible
 	// bit 5
 	Sprite texture;
@@ -94,6 +96,7 @@ void guiNodeRemoveTextContent(GuiNode* n);
 void guiNodePanel(GuiNode* n, v4 dimensions, v4 color);
 void guiNodeRemovePanel(GuiNode* n);
 void guiNodePressable(GuiNode* n, bool pressable);
+void guiNodeSetPressBound(GuiNode* n, v4 dimensions);
 void guiNodeVisible(GuiNode* n, bool visible);
 void guiNodeTexture(GuiNode* n, Sprite t, v2 pos);
 void guiNodeRemoveTexture(GuiNode* n);

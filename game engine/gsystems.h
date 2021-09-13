@@ -19,6 +19,7 @@ void sysFreeSpriteData();
 
 // GUI
 
+void sysPressButtons();
 void sysDrawGuiNodes();
 void sysFreeGuiNodeData();
 
