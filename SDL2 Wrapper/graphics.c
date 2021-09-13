@@ -61,6 +61,14 @@ void renderSetSpriteScale(float scaleX, float scaleY){
 	SDL_RenderSetScale(renderer, spriteScaleX, spriteScaleY);
 }
 
+float scaleOnX(float val){
+	return val/spriteScaleX;
+}
+
+float scaleOnY(float val){
+	return val/spriteScaleY;
+}
+
 void renderSetView(view v){
 	renderView = v;
 	const SDL_Rect port = {v.px, v.py, v.pw, v.ph};

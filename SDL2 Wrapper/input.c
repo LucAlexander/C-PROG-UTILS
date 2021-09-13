@@ -1,5 +1,6 @@
 #include "input.h"
 #include "gmath.h"
+#include "graphics.h"
 
 #include <string.h>
 
@@ -33,15 +34,15 @@ void mouseMoveEvent(int32_t x, int32_t y){
 }
 
 int32_t mouseX(){
-	return inp.mouseX;
+	return scaleOnX(inp.mouseX);
 }
 
 int32_t mouseY(){
-	return inp.mouseY;
+	return scaleOnY(inp.mouseY);
 }
 
 v2 mousePos(){
-	v2 a = {inp.mouseX, inp.mouseY};
+	v2 a = {mouseX(), mouseY()};
 	return a;
 }
 

@@ -52,6 +52,8 @@ SDL_Texture* getTexture(const char* src);
 void renderSetView(view v);
 
 void renderSetSpriteScale(float scaleX, float scaleY);
+float scaleOnX(float val);
+float scaleOnY(float val);
 
 void toggleFullscreen();
 
