@@ -96,3 +96,15 @@ bool keyReleased(const char* key){
 	SDL_Scancode k = SDL_GetScancodeFromName(key);
 	return inp.releasedKeys[k];
 }
+
+void mouseInterrupt(uint8_t b){
+	inp.pressedMouseButtons[b-1] = false;
+	inp.heldMouseButtons[b-1] = false;
+}
+
+void keyInterrupt(const char* key){
+	SDL_Scancode k = SDL_GetScancodeFromName(key);
+	inp.pressedKeys[k] = false;
+	inp.heldKeys[k] = false;
+}
+

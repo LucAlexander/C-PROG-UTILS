@@ -48,4 +48,7 @@ bool keyHeld(const char*);
 bool keyPressed(const char*);
 bool keyReleased(const char*);
 
+void mouseInterrupt(uint8_t);
+void keyInterrupt(const char*);
+
 #endif
