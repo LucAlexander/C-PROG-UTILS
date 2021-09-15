@@ -9,8 +9,8 @@
 #include <stdio.h>
 #include <string.h>
 
-void func(){
-	printf("do action\n");
+void func(GuiNode* n){
+	printf("Button Content Signiture: %u\n", n->registry);
 }
 
 void gmain(){
@@ -61,7 +61,6 @@ void gmain(){
 	guiNodePressable(&node, true);
 	guiNodeSetPressBound(&node, dim);
 	node.action = &func;
-	(*node.action)();
 	Sprite ts;
 	spriteInit(&ts, getTexture("green.png"), 1, 32, 32);
 	v2 tpos = {200, 200};
@@ -195,7 +194,7 @@ void sysPressButtons(){
 	for (i = 0;i<q->count;++i){
 		GuiNode* n = entGet(q->list[i], GUINODE);
 		if (pointInRect(worldToView(mp.x, mp.y), n->pressBound)){
-			(*n->action)();
+			(*n->action)(n);
 			return;
 		}
 	}

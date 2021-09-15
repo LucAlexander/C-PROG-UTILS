@@ -84,7 +84,7 @@ typedef struct GuiNode{
 	v4 panelColor;
 	// bit 3 = pressable
 	v4 pressBound;
-	void (*action)(void);
+	void (*action)(struct GuiNode*);
 	// bit 4 = visible
 	// bit 5
 	Sprite texture;
