@@ -195,6 +195,7 @@ void sysPressButtons(){
 		GuiNode* n = entGet(q->list[i], GUINODE);
 		if (pointInRect(worldToView(mp.x, mp.y), n->pressBound)){
 			(*n->action)(n);
+			mouseInterrupt(1);
 			return;
 		}
 	}
