@@ -11,6 +11,13 @@ int32_t randRange(int32_t a, int32_t b){
 	return rand()%(b-a+1)+a;
 }
 
+float randRangeF(float a, float b){
+	float range = b-a;
+	float result = ((float)rand()/(float)RAND_MAX)*range;
+	result += a;
+	return result;
+}
+
 uint32_t rollDie(uint32_t sides){
 	return randRange(1, sides);
 }
