@@ -207,7 +207,11 @@ void partSysEmit(ParticleSystem* psys, v2* pos, uint32_t id){
 		uint32_t p = entCreate();
 		v2 partPos = {pos->x, pos->y};
 		Particle part = {100};
-		Forces partForce = {5, 5, 0, 0};
+		Forces partForce = {
+			randRange(-15, 15),
+		       	randRange(-15, 15),
+		       	0,
+		       	0};
 		Sprite s;
 		spriteInit(&s, getTexture("particle.png"), 1, 4, 4);
 		entAdd(p, POS2D, &partPos);
