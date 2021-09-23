@@ -42,4 +42,7 @@ uint32_t pointInRect(v2, v4);
 
 uint32_t pointInRectB(v2, v4B);
 
+void approachZero(int32_t* val, int32_t amount);
+void approachZeroF(float* val, float amount);
+
 #endif

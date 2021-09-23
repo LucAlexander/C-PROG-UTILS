@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdlib.h>
 #include "gmath.h"
 
 const float PI = 3.1415926;
@@ -51,3 +52,18 @@ uint32_t pointInRectB(v2 p, v4B r){
 	return (p.x >= r.left && p.x <= r.right) && 
 		(p.y >= r.top && p.y <= r.bottom);
 }
+
+void approachZero(int32_t* val, int32_t amount){
+	uint8_t s = (*val>0);
+	int8_t flip = s-(s==0);
+	*val += flip * (amount*(*val!=0));
+	*val *= (s == (*val>0));
+}
+
+void approachZeroF(float* val, float amount){
+	uint8_t s = (*val>0);
+	int8_t flip = s-(s==0);
+	*val -= flip * (amount*(*val!=0));
+	*val *= (s == (*val>0));
+}
+
