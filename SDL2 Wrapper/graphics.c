@@ -8,6 +8,8 @@
 
 #include <stdio.h>
 
+#include "ecs.h"
+
 static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
 static view renderView = {0, 0, 0, 0, 0, 0};
@@ -241,6 +243,9 @@ void loadFontC(const char* src, uint8_t r, uint8_t g, uint8_t b, uint8_t a){
 	f.ptSize = 16;
 	f.scale = 1;
 	TTF_Font* lFont = TTF_OpenFont(src, f.ptSize);
+	if (lFont == NULL){
+		printf("[!] %s\n",TTF_GetError());
+	}
 	SDL_Color fg = {f.r, f.g, f.b};
 	uint32_t i;
 	char c[2];
