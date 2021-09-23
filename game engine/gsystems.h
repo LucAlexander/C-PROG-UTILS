@@ -11,6 +11,9 @@ void renderSystems();
 
 // ENGINE ESSENTIAL SYSTEMS
 
+void sysApplyForces();
+void sysApplyForceFriction();
+
 // SPRITE AND ANIMATION
 
 void sysAnimateSprites();
@@ -22,5 +25,10 @@ void sysFreeSpriteData();
 void sysPressButtons();
 void sysDrawGuiNodes();
 void sysFreeGuiNodeData();
+
+// PARTICLE SYSTEM
+
+void sysCreateParticles();
+void sysDestroyParticles();
 
 #endif

@@ -14,7 +14,10 @@ enum COMPONENT_ID{
 	POS2D=1,
 	POS3D=2,
 	SPRITE=3,
-	GUINODE=4
+	GUINODE=4,
+	FORCES=5,
+	PARTICLESYSTEM=6,
+	PARTICLE=7
 };
 
 // HITBOX
@@ -22,6 +25,14 @@ typedef struct Hitbox{
 	v4 rect;
 	v2 offset;
 }Hitbox;
+
+// FORCES
+typedef struct Forces{
+	float h;
+	float v;
+	float directional;
+	float direction;
+}Forces;
 
 // SPRITE AND ANIMATIONS
 typedef struct Animation{
@@ -107,5 +118,20 @@ void guiNodeDrawTexture(GuiNode* n);
 void guiNodeDrawText(GuiNode* n);
 
 void freeGuiNodeData(GuiNode* n);
+
+typedef struct Particle{
+	uint32_t life;
+}Particle;
+
+typedef struct ParticleSystem{
+	uint32_t timeBetweenEmits;
+	uint32_t timeToNextEmit;
+	uint32_t particlesPerEmit;
+	int32_t emitCount;
+	int32_t emitRadius;
+}ParticleSystem;
+
+void partSysTryEmit(ParticleSystem* psys, v2* pos, uint32_t id);
+void partSysEmit(ParticleSystem* psys, v2* pos, uint32_t id);
 
 #endif

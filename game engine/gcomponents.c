@@ -1,6 +1,8 @@
 #include "gcomponents.h"
 #include "graphics.h"
 #include "gtime.h"
+#include "ecs.h"
+#include "rng.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -181,5 +183,37 @@ void guiNodeRemoveTexture(GuiNode* n){
 
 void freeGuiNodeData(GuiNode* n){
 	freeSpriteData(&n->texture);
+}
+
+// PARTICLE SYSTEM
+
+void partSysTryEmit(ParticleSystem* psys, v2* pos, uint32_t id){
+	psys->timeToNextEmit -= gTimeDelta();
+	if (psys->timeToNextEmit <= 0){
+		psys->timeToNextEmit = psys->timeBetweenEmits;
+		partSysEmit(psys, pos, id);
+	}
+}
+
+void partSysEmit(ParticleSystem* psys, v2* pos, uint32_t id){
+	if (psys->emitCount-- <= 0){
+		entDestroy(id);
+		return;
+	}
+	uint32_t k;
+	for(k = 0;k<psys->particlesPerEmit;++k){
+		//EMIT PARTICLE TODO
+		// test implementation
+		uint32_t p = entCreate();
+		v2 partPos = {pos->x, pos->y};
+		Particle part = {100};
+		Forces partForce = {5, 5, 0, 0};
+		Sprite s;
+		spriteInit(&s, getTexture("particle.png"), 1, 4, 4);
+		entAdd(p, POS2D, &partPos);
+		entAdd(p, SPRITE, &s);
+		entAdd(p, FORCES, &partForce);
+		entAdd(p, PARTICLE, &part);
+	}
 }
 
