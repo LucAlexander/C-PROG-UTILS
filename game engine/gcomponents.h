@@ -120,7 +120,7 @@ void guiNodeDrawText(GuiNode* n);
 void freeGuiNodeData(GuiNode* n);
 
 typedef struct Particle{
-	uint32_t life;
+	int32_t life;
 }Particle;
 
 typedef struct ParticleSystem{
