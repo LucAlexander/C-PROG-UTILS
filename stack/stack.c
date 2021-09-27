@@ -4,7 +4,7 @@
 
 Stack* stackInit(size_t size){
 	Stack* stack = malloc(sizeof(Stack*));
-	stack->data = malloc(size);
+	stack->data = calloc(0, size);
 	stack->size = size;
 	stack->capacity = 1;
 	stack->count = 0;
