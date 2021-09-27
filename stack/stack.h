@@ -15,6 +15,8 @@ Stack* stackInit(size_t size);
 
 void* stackPop(Stack* s);
 
+void stackResize(Stack* s);
+
 void stackPush(Stack* s, void* data);
 
 void stackFree(Stack* s);

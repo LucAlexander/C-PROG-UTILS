@@ -6,7 +6,7 @@ Stack* stackInit(size_t size){
 	Stack* stack = malloc(sizeof(Stack*));
 	stack->data = calloc(0, size);
 	stack->size = size;
-	stack->capacity = 1;
+	stack->capacity = 32;
 	stack->count = 0;
 	return stack;
 }
@@ -19,10 +19,18 @@ void* stackPop(Stack* stack){
 	return NULL;
 }
 
+void stackResize(Stack* stack){
+	void* resizedBlock = realloc(stack->data, stack->size*stack->capacity*2);
+	uint8_t* newBlock = (uint8_t*)(resizedBlock);
+	newBlock += stack->size*(stack->count);
+	memset(newBlock, 0, stack->size*stack->capacity);
+	stack->data = resizedBlock;
+	stack->capacity*=2;
+}
+
 void stackPush(Stack* stack, void* data){
 	if (stack->count == stack->capacity){
-		stack->data = realloc(stack->data, stack->size*stack->capacity*2);
-		stack->capacity*=2;
+		stackResize(stack);
 	}
 	uint8_t* item = (uint8_t*)(stack->data);
 	item += stack->size*(stack->count++);
