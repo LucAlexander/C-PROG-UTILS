@@ -26,12 +26,12 @@ void ecsInit(uint32_t n, ...){
 	ecs.idBacklog = stackInit(sizeof(uint32_t));
 	ecs.components.typeCount = n;
 	ecs.components.capacity = compMax;
-	ecs.components.data = malloc(size*compMax);
+	ecs.components.data = calloc(compMax, size);
 	ecs.components.sizes = malloc(n*sizeof(size_t));
 	ecs.components.offsets = malloc(n*sizeof(size_t));
-	ecs.components.size = size;
 	memcpy(ecs.components.sizes, s, n*sizeof(size_t));
 	memcpy(ecs.components.offsets, o, n*sizeof(size_t));
+	ecs.components.size = size;
 	ecs.entities.count = 0;
 	ecs.entities.capacity = entInitial;
 	ecs.entities.masks = calloc(entInitial,sizeof(uint64_t));
@@ -205,4 +205,8 @@ void ecsPrint(){
 		printf("\n");
 	}
 	printf("\n_____________________________________________________________\n");
+}
+
+void ecsStats(){
+	printf("ECS backlog stack data element size: %u\n", ecs.idBacklog->size);
 }
